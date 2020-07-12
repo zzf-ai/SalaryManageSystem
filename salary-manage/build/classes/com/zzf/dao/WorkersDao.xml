@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.zzf.dao.WorkersDao">
+	<!-- 按工号查询员工信息 -->
+	<select id="selectWorkersByWno" parameterType="String"
+		resultType="workers">
+		select * from workers
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno};
+			</if>
+		</where>
+	</select>
+	<!-- 模糊查询员工信息 -->
+	<select id="selectWorkersByWname" parameterType="String"
+		resultType="workers">
+		<bind name="wname" value="'%'+wname+'%'" />
+		select * from workers
+		<where>
+			<if test="wname!=null and wname!=''">
+				and wname like #{wname}
+			</if>
+		</where>
+	</select>
+	<!-- 所有员工信息 -->
+	<select id="selectWorkers" resultType="workers">
+		select * from workers;
+	</select>
+	<!-- 插入 -->
+	<insert id="insertWorkers" parameterType="workers">
+		insert into
+		workers(wno,wname,wsex,wnative,wphone)
+		values(#{wno},#{wname},#{wsex},#{wnative},#{wphone});
+	</insert>
+	<!-- 更新 -->
+	<delete id="deleteWorkersByWno" parameterType="String">
+		delete from
+		workers where wno=#{wno};
+	</delete>
+	<update id="updateWorkers" parameterType="Workers">
+		update workers
+		<set>
+			<if test="wname!=null and wname!=''">
+				wname=#{wname},
+			</if>
+			<if test="wsex!=null and wsex!=''">
+				wsex=#{wsex},
+			</if>
+			<if test="wnative!=null and wnative!=''">
+				wnative=#{wnative},
+			</if>
+			<if test="wphone!=null and wphone!=''">
+				wphone=#{wphone},
+			</if>
+		</set>
+		where wno=#{wno};
+	</update>
+</mapper>

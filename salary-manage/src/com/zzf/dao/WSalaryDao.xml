@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.zzf.dao.WSalaryDao">
+	<!-- 按工号查询工资信息 -->
+	<select id="selectWSalaryByWno" parameterType="String"
+		resultType="WSalary">
+		select * from wsalary
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno};
+			</if>
+		</where>
+	</select>
+	<!-- 模糊查询工资信息 -->
+	<select id="selectWSalaryByWname" parameterType="String"
+		resultType="WSalary">
+		<bind name="wname" value="'%'+wname+'%'" />
+		select * from WSalary
+		<where>
+			<if test="wname!=null and wname!=''">
+				and wname like #{wname}
+			</if>
+		</where>
+	</select>
+	<!-- 所有工资信息 -->
+	<select id="selectWSalary" resultType="WSalary">
+		select * from wsalary;
+	</select>
+	<!--插入 -->
+	<insert id="insertWSalary" parameterType="WSalary">
+		insert into
+		WSalary(wno,wname,jno,jname,jsalary,bonus,total)
+		values(#{wno},#{wname},#{jno},#{jname},#{jsalary},#{bonus},#{total});
+	</insert>
+	<!-- 删除 -->
+	<delete id="deleteWSalaryByWno" parameterType="String">
+		delete from
+		wsalary where wno=#{wno};
+	</delete>
+	<!-- 更新 -->
+	<update id="updateWSalary" parameterType="WSalary">
+		update WSalary
+		<set>
+			<if test="wname!=null and wname!=''">
+				wname=#{wname},
+			</if>
+			<if test="jno!=null and jno!=''">
+				jno=#{jno},
+			</if>
+			<if test="jname!=null and jname!=''">
+				jname=#{jname},
+			</if>
+			<if test="jsalary!=null">
+				jsalary=#{jsalary},
+			</if>
+			<if test="bonus!=null">
+				bonus=#{bonus},
+			</if>
+			<if test="total!=null">
+				total=#{total},
+			</if>
+
+		</set>
+		where wno=#{wno};
+	</update>
+</mapper>

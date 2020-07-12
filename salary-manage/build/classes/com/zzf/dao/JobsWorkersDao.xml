@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.zzf.dao.JobsWorkersDao">
+	<!-- 嵌套结果查询 -->
+	<select id="selectJobsWithWorkers" resultMap="JobsWithWorkers">
+		select
+		w.wno,w.wname,j.* from workers w,jobs j,wj
+		where wj.jno=j.jno and
+		wj.wno=w.wno
+	</select>
+	<resultMap type="JobsWorkers" id="JobsWithWorkers">
+		<id property="wno" column="wno" />
+		<result property="wname" column="wname" />
+		<collection property="jobslist" ofType="Jobs">
+			<id property="jno" column="jno" />
+			<result property="jname" column="jname" />
+			<result property="jsalary" column="jsalary" />
+		</collection>
+	</resultMap>
+
+	<select id="selectJobsWithWorkersByWno" parameterType="String"
+		resultMap="JobsWithWorkersByWno">
+		select w.wno,w.wname,j.* from workers w,jobs j,wj
+		where
+		wj.jno=j.jno
+		and wj.wno=w.wno and w.wno=#{wno};
+	</select>
+	<resultMap type="JobsWorkers" id="JobsWithWorkersByWno">
+		<id property="wno" column="wno" />
+		<result property="wname" column="wname" />
+		<collection property="jobslist" ofType="Jobs">
+			<id property="jno" column="jno" />
+			<result property="jname" column="jname" />
+			<result property="jsalary" column="jsalary" />
+		</collection>
+	</resultMap>
+</mapper>

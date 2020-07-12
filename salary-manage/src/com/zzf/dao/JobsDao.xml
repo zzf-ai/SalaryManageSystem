@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.zzf.dao.JobsDao">
+	<!-- 按工资查询职位信息 -->
+	<select id="selectJobsByJsalary" parameterType="float"
+		resultType="Jobs">
+		select * from jobs
+		<where>
+			<if test="jsalary!=null">
+				and jsalary=#{jsalary};
+			</if>
+		</where>
+	</select>
+	<!-- 模糊查询职位信息 -->
+	<select id="selectJobsByJname" parameterType="String"
+		resultType="Jobs">
+		<bind name="jname" value="'%'+jname+'%'" />
+		select * from jobs
+		<where>
+			<if test="jname!=null and jname!=''">
+				and jname like #{jname}
+			</if>
+		</where>
+	</select>
+	<!-- 所有职位信息 -->
+	<select id="selectJobs" resultType="Jobs">
+		select * from jobs;
+	</select>
+	<!-- 插入 -->
+	<insert id="insertJobs" parameterType="Jobs">
+		insert into
+		jobs(jno,jname,jsalary)
+		values(#{jno},#{jname},#{jsalary});
+	</insert>
+	<!-- 删除 -->
+	<delete id="deleteJobsByJno" parameterType="String">
+		delete from jobs
+		where jno=#{jno};
+	</delete>
+	<!-- 更新 -->
+	<update id="updateJobs" parameterType="Jobs">
+		update jobs
+		<set>
+			<if test="jname!=null and jname!=''">
+				jname=#{jname},
+			</if>
+			<if test="jsalary!=null">
+				jsalary=#{jsalary},
+			</if>
+
+		</set>
+		where jno=#{jno};
+	</update>
+
+</mapper>

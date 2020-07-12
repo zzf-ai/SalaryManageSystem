@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.zzf.dao.UserDao">
+	<!-- 通过账号密码查询用户 -->
+	<select id="findUser" parameterType="String" resultType="user">
+		select *
+		from user where user_code=#{usercode} and user_password=#{password};
+	</select>
+	<!-- 通过账号查询用户 -->
+	<select id="findUserCode" parameterType="String"
+		resultType="user">
+		select *
+		from user where user_code=#{usercode};
+	</select>
+	<!-- 注册账号 -->
+	<insert id="insertUser" parameterType="String">
+		insert into
+		user(user_code,user_password) values(#{usercode},#{password});
+	</insert>
+</mapper>
