@@ -10,7 +10,7 @@
 		select * from workers
 		<where>
 			<if test="wno!=null and wno!=''">
-				and wno=#{wno};
+				and wno=#{wno}
 			</if>
 		</where>
 	</select>
@@ -27,7 +27,7 @@
 	</select>
 	<!-- 所有员工信息 -->
 	<select id="selectWorkers" resultType="workers">
-		select * from workers;
+		select * from workers
 	</select>
 	<!-- 插入 -->
 	<insert id="insertWorkers" parameterType="workers">
@@ -35,14 +35,18 @@
 		workers(wno,wname,wsex,wnative,wphone)
 		values(#{wno},#{wname},#{wsex},#{wnative},#{wphone});
 	</insert>
-	<!-- 更新 -->
+	<!-- 删除 -->
 	<delete id="deleteWorkersByWno" parameterType="String">
 		delete from
 		workers where wno=#{wno};
 	</delete>
+	<!--更新-->
 	<update id="updateWorkers" parameterType="Workers">
 		update workers
 		<set>
+			<if test="wno!=null and wno!=''">
+				wno=#{wno},
+			</if>
 			<if test="wname!=null and wname!=''">
 				wname=#{wname},
 			</if>
@@ -56,6 +60,6 @@
 				wphone=#{wphone},
 			</if>
 		</set>
-		where wno=#{wno};
+		where wid=#{wid};
 	</update>
 </mapper>

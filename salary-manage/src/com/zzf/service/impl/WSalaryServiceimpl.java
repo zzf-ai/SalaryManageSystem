@@ -17,30 +17,41 @@ public class WSalaryServiceimpl implements WSalaryService {
 	@Autowired
 	private WSalaryDao wsalaryDao;
 
+	//查找所有工资信息
 	@Override
 	public List<WSalary> findAllWSalary() {
 
 		return wsalaryDao.selectWSalary();
 	}
 
+	//按姓名关键字查找工资信息
 	@Override
 	public List<WSalary> findWSalaryByWname(String wname) {
 
 		return wsalaryDao.selectWSalaryByWname(wname);
 	}
 
+	//按工号查找工资信息
 	@Override
 	public List<WSalary> findWSalaryByWno(String wno) {
 
 		return wsalaryDao.selectWSalaryByWno(wno);
 	}
 
+	//按部门查找工资信息
+	@Override
+	public List<WSalary> findWSalaryByJDept(String jdept) {
+		return wsalaryDao.selectWSalaryByDept(jdept);
+	}
+
+	//添加工资信息
 	@Override
 	public void addWSalary(WSalary wsalary) {
 
 		wsalaryDao.insertWSalary(wsalary);
 	}
 
+	//删除工资信息
 	@Override
 	public void deleteWSalary(String[] wnoArray) {
 
@@ -49,10 +60,17 @@ public class WSalaryServiceimpl implements WSalaryService {
 		}
 	}
 
+	//修改工资信息
 	@Override
 	public void updateWSalary(WSalary wsalary) {
 
 		wsalaryDao.updateWSalary(wsalary);
+	}
+
+	//清空
+	@Override
+	public void truncateWsalary() {
+		wsalaryDao.truncate();
 	}
 
 }

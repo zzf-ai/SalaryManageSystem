@@ -10,7 +10,17 @@
 		select * from wsalary
 		<where>
 			<if test="wno!=null and wno!=''">
-				and wno=#{wno};
+				and wno=#{wno}
+			</if>
+		</where>
+	</select>
+	<!-- 按部门查询工资信息 -->
+	<select id="selectWSalaryByDept" parameterType="String"
+		resultType="WSalary">
+		select * from wsalary
+		<where>
+			<if test="jdept!=null and jdept!=''">
+				and jdept=#{jdept}
 			</if>
 		</where>
 	</select>
@@ -27,13 +37,13 @@
 	</select>
 	<!-- 所有工资信息 -->
 	<select id="selectWSalary" resultType="WSalary">
-		select * from wsalary;
+		select * from wsalary
 	</select>
 	<!--插入 -->
 	<insert id="insertWSalary" parameterType="WSalary">
 		insert into
-		WSalary(wno,wname,jno,jname,jsalary,bonus,total)
-		values(#{wno},#{wname},#{jno},#{jname},#{jsalary},#{bonus},#{total});
+		WSalary(wno,wname,jno,jname,jdept,jsalary,jbonus,total)
+		values(#{wno},#{wname},#{jno},#{jname},#{jdept},#{jsalary},#{jbonus},#{total});
 	</insert>
 	<!-- 删除 -->
 	<delete id="deleteWSalaryByWno" parameterType="String">
@@ -44,6 +54,9 @@
 	<update id="updateWSalary" parameterType="WSalary">
 		update WSalary
 		<set>
+			<if test="wno!=null and wno!=''">
+				wno=#{wno},
+			</if>
 			<if test="wname!=null and wname!=''">
 				wname=#{wname},
 			</if>
@@ -53,17 +66,24 @@
 			<if test="jname!=null and jname!=''">
 				jname=#{jname},
 			</if>
+			<if test="jdept!=null and jdept!=''">
+				jdept=#{jdept},
+			</if>
 			<if test="jsalary!=null">
 				jsalary=#{jsalary},
 			</if>
-			<if test="bonus!=null">
-				bonus=#{bonus},
+			<if test="jbonus!=null">
+				jbonus=#{jbonus},
 			</if>
 			<if test="total!=null">
 				total=#{total},
 			</if>
-
 		</set>
-		where wno=#{wno};
+		where wsid=#{wsid};
+	</update>
+
+	<!--清空-->
+	<update id="truncate">
+    	truncate table wsalary;
 	</update>
 </mapper>

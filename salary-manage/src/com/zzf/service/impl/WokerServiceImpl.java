@@ -17,24 +17,28 @@ public class WokerServiceImpl implements WorkerService {
 	@Autowired
 	private WorkersDao workersDao;
 
+	//查找所有员工
 	@Override
 	public List<Workers> findAllWorkers() {
 
 		return workersDao.selectWorkers();
 	}
 
+	//按工号查找员工
 	@Override
 	public List<Workers> findWorkersByWno(String wno) {
 
 		return workersDao.selectWorkersByWno(wno);
 	}
 
+	//添加员工
 	@Override
 	public void addWorkers(Workers workers) {
 
 		workersDao.insertWorkers(workers);
 	}
 
+	//删除员工
 	@Override
 	public void deleteWorkers(String[] wnoArray) {
 
@@ -43,6 +47,7 @@ public class WokerServiceImpl implements WorkerService {
 		}
 	}
 
+	//更新员工
 	@Override
 	public void updateWorkers(Workers workers) {
 
@@ -50,6 +55,7 @@ public class WokerServiceImpl implements WorkerService {
 
 	}
 
+	//按姓名关键字查找员工
 	@Override
 	public List<Workers> findWorkersByWname(String wname) {
 		// TODO 自动生成的方法存根

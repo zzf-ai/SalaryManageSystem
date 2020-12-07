@@ -15,6 +15,9 @@ public interface WSalaryService {
 	// 按工号查询
 	List<WSalary> findWSalaryByWno(String wno);
 
+	// 按部门查询
+	List<WSalary> findWSalaryByJDept(String jdept);
+
 	// 添加
 	void addWSalary(WSalary wsalary);
 
@@ -23,4 +26,7 @@ public interface WSalaryService {
 
 	// 修改
 	void updateWSalary(WSalary wsalary);
+
+	//清空表
+	void truncateWsalary();
 }

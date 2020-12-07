@@ -8,11 +8,14 @@ public interface JobService {
 	// 查询全部职位信息
 	List<Jobs> findAllJobs();
 
-	// 关键字查询
+	// 按职位编号查询
+	List<Jobs> findJobsByJno(String jno);
+
+	// 职位名关键字查询
 	List<Jobs> findJobsByJname(String jname);
 
-	// 按工资查询
-	List<Jobs> findJobsByJsalary(float jsalary);
+	// 按部门查询
+	List<Jobs> findJobsByJdept(String jdept);
 
 	// 添加
 	void addJobs(Jobs Jobs);

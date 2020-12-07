@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="jdbc:mysql://localhost:3306/wage?serverTimezone=GMT%2b8&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;zeroDateTimeBehavior=CONVERT_TO_NULL&amp;allowPublicKeyRetrieval=true" uuid="a7635587-a72b-42b4-a1ac-04df8bd6f328">
+      <database-info product="MySQL" version="8.0.16" jdbc-version="4.2" driver-name="MySQL Connector/J" driver-version="mysql-connector-java-8.0.16 (Revision: 34cbc6bc61f72836e26327537a432d6db7c77de6)" dbms="MYSQL" exact-version="8.0.16" exact-driver-version="8.0">
+        <extra-name-characters>#@</extra-name-characters>
+        <identifier-quote-string>`</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>root</user-name>
+      <schema-mapping>
+        <introspection-scope>
+          <node kind="schema" qname="@" />
+        </introspection-scope>
+      </schema-mapping>
+    </data-source>
+  </component>
+</project>

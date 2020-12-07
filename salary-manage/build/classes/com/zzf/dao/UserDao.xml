@@ -3,20 +3,70 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace表示命名空间 -->
 <mapper namespace="com.zzf.dao.UserDao">
+	<!-- 查询全部用户 -->
+	<select id="selectAll" parameterType="String" resultType="user">
+		select *
+		from user
+	</select>
 	<!-- 通过账号密码查询用户 -->
 	<select id="findUser" parameterType="String" resultType="user">
 		select *
-		from user where user_code=#{usercode} and user_password=#{password};
+		from user where usercode=#{usercode} and password=#{password}
 	</select>
 	<!-- 通过账号查询用户 -->
 	<select id="findUserCode" parameterType="String"
 		resultType="user">
 		select *
-		from user where user_code=#{usercode};
+		from user where usercode=#{usercode}
+	</select>
+	<!-- 通过工号查询用户 -->
+	<select id="findUserByWno" parameterType="String"
+		resultType="user">
+		select *
+		from user where wno=#{wno}
 	</select>
 	<!-- 注册账号 -->
-	<insert id="insertUser" parameterType="String">
+	<insert id="insertUser" parameterType="user">
 		insert into
-		user(user_code,user_password) values(#{usercode},#{password});
+		user(usercode,password,authority,wno) values(#{usercode},#{password},#{authority},#{wno});
 	</insert>
+
+	<!-- 删除 -->
+	<delete id="deleteUsers" parameterType="String">
+		delete from
+		user where user_id=#{user_id};
+	</delete>
+
+	<!--修改权限-->
+	<update id="grant" parameterType="String">
+		update user
+		<set>
+			<if test="authority!=null and authority!=''">
+				authority=#{authority},
+			</if>
+		</set>
+		where user_id=#{user_id};
+	</update>
+
+	<!--修改密码-->
+	<update id="changePassword" parameterType="String">
+		update user
+		<set>
+			<if test="password!=null and password!=''">
+				password=#{password},
+			</if>
+		</set>
+		where user_id=#{user_id};
+	</update>
+
+	<!--修改账号-->
+	<update id="changeUserCode" parameterType="String">
+		update user
+		<set>
+			<if test="usercode!=null and usercode!=''">
+				usercode=#{usercode},
+			</if>
+		</set>
+		where user_id=#{user_id};
+	</update>
 </mapper>

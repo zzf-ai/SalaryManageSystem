@@ -8,11 +8,14 @@ import com.zzf.po.Jobs;
 
 public interface JobsDao {
 
+	// 通过职位编号查找
+	List<Jobs> selectJobsByJno(@Param(value = "jno") String jno);
+
 	// 通过名称关键字查找
 	List<Jobs> selectJobsByJname(@Param(value = "jname") String jname);
 
 	// 通过工资查找
-	List<Jobs> selectJobsByJsalary(@Param(value = "jsalary") float jsalary);
+	List<Jobs> selectJobsByJdept(@Param(value = "jdept") String jdept);
 
 	// 查找全部
 	List<Jobs> selectJobs();

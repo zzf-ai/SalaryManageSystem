@@ -1,14 +1,13 @@
 package com.zzf.po;
 
-import java.io.Serializable;
+//用户实体类
+public class User {
 
-//账号实体类
-public class User implements Serializable {
-
-	private static final long serivalVersionUID = 1L;
 	private Integer user_id;// id
-	private String user_code;// 用户账号
-	private String user_password;// 用户密码
+	private String usercode;// 用户账号
+	private String password;// 用户密码
+	private String authority;// 用户权限
+	private String wno;//用户工号
 
 	public Integer getUser_id() {
 		return user_id;
@@ -18,20 +17,35 @@ public class User implements Serializable {
 		this.user_id = user_id;
 	}
 
-	public String getUser_code() {
-		return user_code;
+	public String getUsercode() {
+		return usercode;
 	}
 
-	public void setUser_code(String user_code) {
-		this.user_code = user_code;
+	public void setUsercode(String usercode) {
+		this.usercode = usercode;
 	}
 
-	public String getUser_password() {
-		return user_password;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setUser_password(String user_password) {
-		this.user_password = user_password;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
+	public String getAuthority() {
+		return authority;
+	}
+
+	public void setAuthority(String authority) {
+		this.authority = authority;
+	}
+
+	public String getWno() {
+		return wno;
+	}
+
+	public void setWno(String wno) {
+		this.wno = wno;
+	}
 }

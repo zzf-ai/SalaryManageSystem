@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jackson-mapper-lgpl-1.9.13">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/WebContent/WEB-INF/lib/jackson-mapper-lgpl-1.9.13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

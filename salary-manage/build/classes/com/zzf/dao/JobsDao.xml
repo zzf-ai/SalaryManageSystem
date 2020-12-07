@@ -4,13 +4,23 @@
 
 <!-- namespace表示命名空间 -->
 <mapper namespace="com.zzf.dao.JobsDao">
-	<!-- 按工资查询职位信息 -->
-	<select id="selectJobsByJsalary" parameterType="float"
+	<!-- 按部门查询职位信息 -->
+	<select id="selectJobsByJdept" parameterType="String"
 		resultType="Jobs">
 		select * from jobs
 		<where>
-			<if test="jsalary!=null">
-				and jsalary=#{jsalary};
+			<if test="jdept!=null and jdept!=''">
+				and jdept=#{jdept}
+			</if>
+		</where>
+	</select>
+	<!-- 按编号查询职位信息 -->
+	<select id="selectJobsByJno" parameterType="String"
+		resultType="Jobs">
+		select * from jobs
+		<where>
+			<if test="jno!=null and jno!=''">
+				and jno=#{jno}
 			</if>
 		</where>
 	</select>
@@ -27,13 +37,13 @@
 	</select>
 	<!-- 所有职位信息 -->
 	<select id="selectJobs" resultType="Jobs">
-		select * from jobs;
+		select * from jobs
 	</select>
 	<!-- 插入 -->
 	<insert id="insertJobs" parameterType="Jobs">
 		insert into
-		jobs(jno,jname,jsalary)
-		values(#{jno},#{jname},#{jsalary});
+		jobs(jno,jname,jsalary,jbonus,jdept)
+		values(#{jno},#{jname},#{jsalary},#{jbonus},#{jdept});
 	</insert>
 	<!-- 删除 -->
 	<delete id="deleteJobsByJno" parameterType="String">
@@ -44,15 +54,23 @@
 	<update id="updateJobs" parameterType="Jobs">
 		update jobs
 		<set>
+			<if test="jno!=null and jno!=''">
+				jno=#{jno},
+			</if>
 			<if test="jname!=null and jname!=''">
 				jname=#{jname},
 			</if>
 			<if test="jsalary!=null">
 				jsalary=#{jsalary},
 			</if>
-
+			<if test="jbonus!=null">
+				jbonus=#{jbonus},
+			</if>
+			<if test="jdept!=null and jdept!=''">
+				jdept=#{jdept},
+			</if>
 		</set>
-		where jno=#{jno};
+		where jid=#{jid};
 	</update>
 
 </mapper>

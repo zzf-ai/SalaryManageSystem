@@ -2,14 +2,20 @@ package com.zzf.controller;
 
 import java.util.List;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.zzf.po.User;
+import com.zzf.service.UserService;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import com.zzf.po.Workers;
 import com.zzf.service.WorkerService;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * 员工个人信息模块
@@ -20,6 +26,10 @@ public class WorkersController {
 
 	@Autowired
 	private WorkerService workerService;
+
+	@Autowired
+	private UserService userService;
+
 
 	// 全部查询
 	@RequestMapping("/workerslist.action")
@@ -46,11 +56,6 @@ public class WorkersController {
 	}
 
 	// 添加
-	@RequestMapping(value = "/workerspreinsert.action", method = RequestMethod.GET)
-	public String WorkersPreinsert() {
-		return "workers/workersadd";
-	}
-
 	@RequestMapping(value = "/workersinsert.action", method = RequestMethod.POST)
 	public String WorkersInsert(Workers workers) {
 		workerService.addWorkers(workers);
@@ -60,21 +65,44 @@ public class WorkersController {
 	// 删除
 	@RequestMapping(value = "/workersdelete.action", method = RequestMethod.POST)
 	public String WorkersDelete(String[] wnoArray) {
+		//System.out.println();
 		workerService.deleteWorkers(wnoArray);
 		return "redirect:workerslist.action";
 	}
 
-	// 修改
-	@RequestMapping(value = "/workerspreupdate.action", method = RequestMethod.GET)
-	public String WorkersPreupdate(Workers workers, Model model) {
-		model.addAttribute("workers", workers);
-		return "workers/workersupdate";
-	}
-
+	//更新
 	@RequestMapping(value = "/workersupdate.action", method = RequestMethod.POST)
 	public String WorkersUpdate(Workers workers) {
 		workerService.updateWorkers(workers);
 		return "redirect:workerslist.action";
+	}
+
+	//修改个人信息
+	@RequestMapping(value = "/workersupdate2.action", method = RequestMethod.POST)
+	public String WorkersUpdate2(Workers workers, String usercode, String user_id, HttpSession session) {
+		workerService.updateWorkers(workers);
+		userService.changeUserCode(usercode,user_id);
+		User user = userService.findUserCode(usercode);
+		if (user != null) {
+			// 将用户对象添加到Session
+			session.setAttribute("USER_SESSION", user);
+		}
+		return "redirect:toMyInfo.action";
+	}
+
+	//异步验证
+	@RequestMapping(value = "/ajaxCheck3.action",method = RequestMethod.POST)
+	@ResponseBody
+	public String exam(@RequestBody JSONObject data) {
+		String wno=data.getString("wno");
+		System.out.println(wno);
+		List<Workers> workers=workerService.findWorkersByWno(wno);
+		System.out.println(workers);
+		if((workers!=null&&workers.size()==1)){
+			return "ok";
+		}
+		else
+			return "false";
 	}
 
 }

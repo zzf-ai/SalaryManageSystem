@@ -1,13 +1,22 @@
 package com.zzf.po;
 
-//员工持久化类
+//员工实体类
 public class Workers {
 
+	private Integer wid;//id
 	private String wno;// 工号
 	private String wname;// 员工姓名
 	private String wsex;// 员工性别
 	private String wnative;// 员工籍贯
 	private String wphone;// 员工手机号
+
+	public Integer getWid() {
+		return wid;
+	}
+
+	public void setWid(Integer wid) {
+		this.wid = wid;
+	}
 
 	public String getWno() {
 		return wno;
@@ -48,5 +57,4 @@ public class Workers {
 	public void setWphone(String wphone) {
 		this.wphone = wphone;
 	}
-
 }

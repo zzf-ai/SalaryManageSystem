@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.zzf.dao.WJDao">
+
+	<!-- 通过工号查询 -->
+	<select id="selectWJByWno" parameterType="String"
+			resultType="wj">
+		select *
+		from wj where wno=#{wno}
+	</select>
+	<!-- 插入 -->
+	<insert id="insertWJ" parameterType="Wj">
+		insert into
+		wj(wno,jno)
+		values(#{wno},#{jno});
+	</insert>
+	<!-- 删除 -->
+	<delete id="deleteWjById" parameterType="Integer">
+		delete from
+		wj where id=#{id};
+	</delete>
+	<!--更新-->
+	<update id="updateWJ" parameterType="Wj">
+		update wj
+		<set>
+			<if test="wno!=null and wno!=''">
+				wno=#{wno},
+			</if>
+			<if test="jno!=null and jno!=''">
+				jno=#{jno},
+			</if>
+		</set>
+		where id=#{id};
+	</update>
+</mapper>
