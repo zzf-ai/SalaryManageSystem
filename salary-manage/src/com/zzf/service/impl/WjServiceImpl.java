@@ -45,6 +45,16 @@ public class WjServiceImpl implements WjService {
     }
 
     @Override
+    public List<Wj> findWJAll() {
+        return wjDao.selectWJAll();
+    }
+
+    @Override
+    public String[] findWnoOfWj() {
+        return wjDao.selectWnoOfWj();
+    }
+
+    @Override
     public Wj findWJByWno(String wno) {
         return wjDao.selectWJByWno(wno);
     }

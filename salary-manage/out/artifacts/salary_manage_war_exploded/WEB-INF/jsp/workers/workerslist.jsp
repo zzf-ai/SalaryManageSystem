@@ -23,7 +23,7 @@
 					console.log(data.toString());
 					if(data.toString()!='ok'){
 						document.getElementById("error1").style.display="none";
-						document.form_data.submit();
+						addSubmit();
 					}
 					else{
 						document.getElementById("error1").style.display="block";
@@ -45,12 +45,12 @@
 					console.log(data.toString());
 					if(data.toString()!='ok'){
 						document.getElementById("error2").style.display="none";
-						document.form_data2.submit();
+						changeSubmit();
 					}
 					else{
 						if(d==t) {
 							document.getElementById("error2").style.display = "none";
-							document.form_data2.submit();
+							changeSubmit();
 						}
 						else
 							document.getElementById("error2").style.display="block";
@@ -71,13 +71,84 @@
 				alert("请选择再删除！")
 			}
 			else{
-				document.form1.submit();
+				//document.form1.submit();
+				delubmit();
 			}
 		}
+		function delubmit() {
+			// var s=document.getElementsByName("wnoArray");
+			var checkID=[];
+			$("input[name='wnoArray']:checked").each(function(i){
+				checkID[i] = $(this).val();
+			});
+			//返回字符串，用text
+			$.ajax({
+				type:'post',
+				url:'${pageContext.request.contextPath }/workersdelete.action',
+				data:{"wnoArray":checkID},
+				traditional: true,
+				dataType:'text',
+				success:function(data){
+					console.log(data)
+					if(data=='true'){
+						alert("删除成功")
+						window.location.reload();
+					}else {
+						alert("删除失败")
+						window.location.reload();
+					}
+				}
+			});
+		}
+
+		function changeSubmit() {
+			/*var data=JSON.stringify($("#form_data2").serialize());
+			alert(data)*/
+			$.ajax({
+				type:'post',
+				url:'${pageContext.request.contextPath }/workersupdate.action',
+				data:$("#form_data2").serialize(),
+				success:function(data){
+					console.log(data)
+					if(data=='true'){
+						alert("修改成功")
+						window.location.reload();
+					}else {
+						alert("修改失败")
+						window.location.reload();
+					}
+				}
+			})
+		}
+
+		function addSubmit() {
+			$.ajax({
+				type:'post',
+				url:'${pageContext.request.contextPath }/workersinsert.action',
+				data:$("#form_data").serialize(),
+				success:function(data){
+					console.log(data)
+					if(data=='true'){
+						alert("添加成功")
+						//window.location.reload();
+						window.location.href='${pageContext.request.contextPath }/workerslist.action?currentPage=${workerList.totalPage}';
+					}else {
+						alert("添加失败")
+						window.location.reload();
+					}
+				}
+			})
+		}
+
 		//按姓名关键字查找
 		function findByWname(a) {
 			var s='wname='+document.getElementById('text').value;
 			a.href='${pageContext.request.contextPath }/workerslistbyname.action?'+s;
+		}
+
+		//全部查找
+		function findAll(a) {
+			a.href='${pageContext.request.contextPath }/workerslist.action?';
 		}
 		//按工号查找
 		function findByWno(a) {
@@ -168,11 +239,12 @@
 					<div class="span12">
 						<div class="col-md-9">
 							<form class="form-search">
-								<input class="input-medium search-query" type="text" id="text" /> <a class="btn btn-primary" onclick="findByWname(this)">按关键字查找</a>
+								<input class="input-medium search-query" type="text" id="text" value="${wname}" /> <a class="btn btn-primary" onclick="findByWname(this)">按关键字查找</a>
 								<a class="btn btn-primary" onclick="findByWno(this)">按工号查找</a>
+								<a class="btn btn-primary" onclick="findAll(this)">全部查找</a>
 							</form>
 						</div>
-						<form action="${pageContext.request.contextPath }/workersdelete.action" method="post" id="form1" name="form1">
+						<form method="post" id="form1" name="form1">
 							<table class="table table-hover">
 								<thead>
 								<tr>
@@ -201,7 +273,7 @@
 								</tr>
 								</thead>
 								<tbody>
-								<c:forEach items="${workerList}" var="worker">
+								<c:forEach items="${workerList.datas}" var="worker">
 									<tr>
 										<td><input type="checkbox" name="wnoArray"
 												   value="${worker.wno }"></td>
@@ -227,9 +299,95 @@
 				</div>
 			</div>
 		</div>
+		<!-- 分页文字信息 -->
+		<div class="row">
+			<div class="col-md-12 text-center">
+				当前第${workerList.currentPage}页，总共${workerList.totalPage}页，总共${workerList.totalCount}条记录
+			</div>
+		</div>
+		<!-- 分页条信息 -->
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<nav aria-label="Page navigation">
+					<c:if test="${flag1==0}">
+						<ul class="pagination">
+							<li><a href="${pageContext.request.contextPath }/workerslist.action?currentPage=1" >首页</a></li>
+							<c:if test="${workerList.currentPage!=1}">
+								<li>
+									<a href="${pageContext.request.contextPath }/workerslist.action?currentPage=${workerList.currentPage-1}" aria-label="Previous">
+										<span aria-hidden="true">&laquo;</span>
+									</a>
+								</li>
+							</c:if>
+
+							<c:forEach begin="1" end="${workerList.totalPage}" var="pageNum">
+								<li <c:if test="${pageNum==workerList.currentPage}">class="active"</c:if> ><a href="${pageContext.request.contextPath }/workerslist.action?currentPage=${pageNum}">${pageNum}</a></li>
+							</c:forEach>
+							<c:if test="${workerList.currentPage!=workerList.totalPage}">
+								<li>
+									<a href="${pageContext.request.contextPath }/workerslist.action?currentPage=${workerList.currentPage+1}" aria-label="Next">
+										<span aria-hidden="true">&raquo;</span>
+									</a>
+								</li>
+							</c:if>
+							<li><a href="${pageContext.request.contextPath }/workerslist.action?currentPage=${workerList.totalPage}">尾页</a></li>
+						</ul>
+					</c:if>
+					<c:if test="${flag1==1}">
+						<ul class="pagination">
+							<li><a href="${pageContext.request.contextPath }/workerslistbyname.action?currentPage=1&wname=${wname}" >首页</a></li>
+							<c:if test="${workerList.currentPage!=1}">
+								<li>
+									<a href="${pageContext.request.contextPath }/workerslistbyname.action?currentPage=${workerList.currentPage-1}&wname=${wname}" aria-label="Previous">
+										<span aria-hidden="true">&laquo;</span>
+									</a>
+								</li>
+							</c:if>
+							<c:forEach begin="1" end="${workerList.totalPage}" var="pageNum">
+								<li <c:if test="${pageNum==workerList.currentPage}">class="active"</c:if> ><a href="${pageContext.request.contextPath }/workerslistbyname.action?currentPage=${pageNum}&wname=${wname}">${pageNum}</a></li>
+							</c:forEach>
+							<c:if test="${workerList.currentPage!=workerList.totalPage}">
+								<li>
+									<a href="${pageContext.request.contextPath }/workerslistbyname.action?currentPage=${workerList.currentPage+1}&wname=${wname}" aria-label="Next">
+										<span aria-hidden="true">&raquo;</span>
+									</a>
+								</li>
+							</c:if>
+							<li><a href="${pageContext.request.contextPath }/workerslistbyname.action?currentPage=${workerList.totalPage}&wname=${wname}">尾页</a></li>
+						</ul>
+					</c:if>
+					<c:if test="${flag1==2}">
+						<ul class="pagination">
+							<li><a href="${pageContext.request.contextPath }/workerslistbyno.action?currentPage=1&wname=${wno}" >首页</a></li>
+							<c:if test="${workerList.currentPage!=1}">
+								<li>
+									<a href="${pageContext.request.contextPath }/workerslistbyno.action?currentPage=${workerList.currentPage-1}&wno=${wno}" aria-label="Previous">
+										<span aria-hidden="true">&laquo;</span>
+									</a>
+								</li>
+							</c:if>
+							<c:forEach begin="1" end="${workerList.totalPage}" var="pageNum">
+								<li <c:if test="${pageNum==workerList.currentPage}">class="active"</c:if> ><a href="${pageContext.request.contextPath }/workerslist.action?currentPage=${pageNum}">${pageNum}</a></li>
+							</c:forEach>
+							<c:if test="${workerList.currentPage!=workerList.totalPage}">
+								<li>
+									<a href="${pageContext.request.contextPath }/workerslistbyno.action?currentPage=${workerList.currentPage+1}&wno=${wno}" aria-label="Next">
+										<span aria-hidden="true">&raquo;</span>
+									</a>
+								</li>
+							</c:if>
+							<li><a href="${pageContext.request.contextPath }/workerslistbyname.action?currentPage=${workerList.totalPage}&wno=${wno}">尾页</a></li>
+						</ul>
+					</c:if>
+				</nav>
+			</div>
+		</div>
+
+
+
 
 		<!--添加业务模态框-->
-		<form method="post" action="${pageContext.request.contextPath }/workersinsert.action" class="form-horizontal" role="form" name="form_data" id="form_data" style="margin: 20px;">
+		<form method="post" class="form-horizontal" role="form" name="form_data" id="form_data" style="margin: 20px;">
 			<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -301,7 +459,7 @@
 		</form>
 
 		<!--修改业务模态框-->
-		<form method="post" action="${pageContext.request.contextPath }/workersupdate.action" class="form-horizontal" role="form" id="form_data2" name="form_data2" style="margin: 20px;">
+		<form method="post" class="form-horizontal" role="form" id="form_data2" name="form_data2" style="margin: 20px;">
 			<div class="modal fade" id="updateUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">

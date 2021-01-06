@@ -8,8 +8,18 @@
     <title>工资结算</title>
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.24.0/moment-with-locales.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker1').datetimepicker({
+                format: 'YYYY-MM',
+                locale: moment.locale('zh-cn'),
+                // defaultDate: "2020-02-08",
+            });
+        });
         //结算服务
         function f(){
             $('table tr').each(function(){
@@ -23,6 +33,7 @@
         //入库服务
         function p(){
             var a=new Array();
+            var settlement=$('#settledate').val();
             $('table tr').each(function(i){
                 var wsalary=new Object();
                 var wno="wno";
@@ -33,6 +44,7 @@
                 var jsalary="jsalary";
                 var jbonus="jbonus";
                 var total="total";
+                var settledate="settledate";
 
                 wsalary[wno]=$(this).find('td:eq(0)').text();
                 wsalary[wname]=$(this).find('td:eq(1)').text();
@@ -42,6 +54,7 @@
                 wsalary[jsalary]=$(this).find('td:eq(5)').text();
                 wsalary[jbonus]=$(this).find('td:eq(6)').text();
                 wsalary[total]=$(this).find('td:eq(7)').text();
+                wsalary[settledate]=settlement;
                 if(wsalary[wno]!=''){
                     a[i]=wsalary;
                     console.log(wsalary);
@@ -115,6 +128,22 @@
             <h3>
                 工资结算
             </h3>
+        </div>
+        <div class="span12">
+            <label>选择日期：</label>
+
+            <!--指定 date标记-->
+
+            <div class='input-group date col-md-2' id='datetimepicker1'>
+
+                <input id="settledate" type='text' class="form-control" />
+
+                <span class="input-group-addon">
+
+                    <span class="glyphicon glyphicon-calendar"></span>
+
+                </span>
+            </div>
         </div>
         <div class="span12">
             <div class="col-md-10">

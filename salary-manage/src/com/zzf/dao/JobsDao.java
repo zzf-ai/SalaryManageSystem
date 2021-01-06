@@ -1,5 +1,6 @@
 package com.zzf.dao;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -11,14 +12,27 @@ public interface JobsDao {
 	// 通过职位编号查找
 	List<Jobs> selectJobsByJno(@Param(value = "jno") String jno);
 
-	// 通过名称关键字查找
-	List<Jobs> selectJobsByJname(@Param(value = "jname") String jname);
 
-	// 通过工资查找
-	List<Jobs> selectJobsByJdept(@Param(value = "jdept") String jdept);
+	List<Jobs> selectJobsByJnoByPage(HashMap<String, Object> map);
+
+	// 通过名称关键字查找
+	List<Jobs> selectJobsByJname(HashMap<String, Object> map);
+
+	// 通过部门查找
+	List<Jobs> selectJobsByJdept(HashMap<String, Object> map);
 
 	// 查找全部
 	List<Jobs> selectJobs();
+
+	List<Jobs> selectJobsByPage(HashMap<String, Object> map);
+
+	int selectJobsCounts();
+
+	int selectJobsCountsByJdept(@Param(value = "jdept")String jdept);
+
+	int selectJobsCountsByJname(@Param(value = "jname")String jname);
+
+	int selectJobsCountsByJno(@Param(value = "jno")String jno);
 
 	// 插入
 	void insertJobs(Jobs Jobs);

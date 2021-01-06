@@ -22,5 +22,11 @@ public interface WjService {
     void updateWj(Wj wj);
 
     // 通过工号查找
+    List<Wj> findWJAll();
+
+    //查找工号
+    String[] findWnoOfWj();
+
+    // 通过工号查找
     Wj findWJByWno(String wno);
 }

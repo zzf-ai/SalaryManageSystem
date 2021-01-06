@@ -1,5 +1,10 @@
 package com.zzf.po;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
+
 //工资信息实体类
 public class WSalary {
 
@@ -11,8 +16,36 @@ public class WSalary {
 	private String jdept;//所属部门
 	private float jsalary;// 基本工资
 	private float jbonus;// 奖金
+	private String settledate;//结算日期
 	private float total;// 总工资or应发工资
+	private String isgrant;//是否已发放
 
+	@DateTimeFormat(pattern="yyyy-MM-dd")
+	private Date grantdate;//发放日期
+
+	public String getSettledate() {
+		return settledate;
+	}
+
+	public void setSettledate(String settledate) {
+		this.settledate = settledate;
+	}
+
+	public Date getGrantdate() {
+		return grantdate;
+	}
+
+	public void setGrantdate(Date grantdate) {
+		this.grantdate = grantdate;
+	}
+
+	public String getIsgrant() {
+		return isgrant;
+	}
+
+	public void setIsgrant(String isgrant) {
+		this.isgrant = isgrant;
+	}
 
 	public Integer getWsid() {
 		return wsid;

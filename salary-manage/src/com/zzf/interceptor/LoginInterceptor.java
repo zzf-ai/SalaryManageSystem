@@ -36,7 +36,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 		String url = request.getRequestURI();
 		// 拦截除了登录、注册之外的所有请求
 		if (url.indexOf("/login.action") > 0 || url.indexOf("/toRegister.action") > 0
-				|| url.indexOf("/Register.action") > 0||url.indexOf("/ajaxCheck")>0) {
+				|| url.indexOf("/Register.action") > 0||url.indexOf("/ajaxCheck")>0||url.indexOf("/validateCode")>0) {
 			return true;
 		}
 		// 获取session

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -30,7 +31,7 @@
 				<ul class="nav navbar-nav">
 					<li><a href="${pageContext.request.contextPath}/toCustomer.action">主页 <span class="sr-only">(current)</span></a></li>
 					<li><a href="${pageContext.request.contextPath }/jobslist.action">公司职位信息查询</a></li>
-					<li><a href="${pageContext.request.contextPath }/JobsWorkerslist.action">员工工资结算</a></li>
+					<li><a href="${pageContext.request.contextPath }/JobsWorkerslist2.action">员工工资结算</a></li>
 					<li><a href="${pageContext.request.contextPath }/WSalaryslist.action">员工工资信息管理</a></li>
 					<li class="active"><a href="${pageContext.request.contextPath }/WSalaryslistbyno2.action">我的工资信息</a></li>
 				</ul>
@@ -86,58 +87,70 @@
 	<div class="row-fluid">
 		<h5 class="page-header"></h5>
 	</div>
-	<form class="form-horizontal text-center">
-		<c:forEach items="${WSalaryList}" var="wsalary">
-			<div class="form-group">
-				<label for="wno" class="col-sm-2 control-label">工号</label>
-				<div class="col-sm-3">
-					<input type="text" class="form-control" id="wno" value="${wsalary.wno }" readonly>
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid">
+				<div class="span12">
+					<div class="col-md-9">
+						<%--<form class="form-search">
+							<input class="input-medium search-query" type="text" id="text" /> <a class="btn btn-primary" onclick="findByWname(this)">按姓名关键字查找</a>
+							<a class="btn btn-primary" onclick="findByWno(this)">按工号查找</a> <a class="btn btn-primary" onclick="findByJdept(this)">按部门查询</a> <a class="btn btn-primary" onclick="findAll(this)">全部查询</a>
+						</form>--%>
+					</div>
+					<form action="${pageContext.request.contextPath }/WSalarysdelete.action" method="post" id="form1" name="form1">
+						<table class="table table-hover" id="#tab">
+							<thead>
+							<tr>
+								<th>
+									工号
+								</th>
+								<th>
+									姓名
+								</th>
+								<th>
+									职位名称
+								</th>
+								<th>
+									所属部门
+								</th>
+								<th>
+									基本工资
+								</th>
+								<th>
+									奖金
+								</th>
+								<th>
+									总工资
+								</th>
+								<th>
+									工资月份
+								</th>
+								<th>
+									发放日期
+								</th>
+							</tr>
+							</thead>
+							<tbody>
+							<c:forEach items="${WSalaryList}" var="wsalary">
+								<tr>
+									<td>${wsalary.wno }</td>
+									<td>${wsalary.wname }</td>
+									<td>${wsalary.jname }</td>
+									<td>${wsalary.jdept }</td>
+									<td>${wsalary.jsalary }</td>
+									<td>${wsalary.jbonus }</td>
+									<td>${wsalary.total }</td>
+									<td>${wsalary.settledate }</td>
+									<td><fmt:formatDate value="${wsalary.grantdate}" pattern="yyyy-MM-dd"/></td>
+								</tr>
+							</c:forEach>
+							</tbody>
+						</table>
+					</form>
 				</div>
 			</div>
-			<div class="form-group">
-				<label for="wname" class="col-sm-2 control-label">姓名</label>
-				<div class="col-sm-3">
-					<input type="text" class="form-control" id="wname" value="${wsalary.wname}" readonly>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="jno" class="col-sm-2 control-label">职位编号</label>
-				<div class="col-sm-3">
-					<input type="text" class="form-control" id="jno" value="${wsalary.jno}" readonly>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="jname" class="col-sm-2 control-label">职位名称</label>
-				<div class="col-sm-3">
-					<input type="text" class="form-control" id="jname" value="${wsalary.jname}" readonly>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="jdept" class="col-sm-2 control-label">所属部门</label>
-				<div class="col-sm-3">
-					<input type="text" class="form-control" id="jdept" value="${wsalary.jdept}" readonly>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="jsalary" class="col-sm-2 control-label">基本工资</label>
-				<div class="col-sm-3">
-					<input type="text" class="form-control" id="jsalary" value="${wsalary.jsalary}" readonly>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="jbonus" class="col-sm-2 control-label">奖金</label>
-				<div class="col-sm-3">
-					<input type="text" class="form-control" id="jbonus" value="${wsalary.jbonus}" readonly>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="total" class="col-sm-2 control-label">总工资</label>
-				<div class="col-sm-3">
-					<input type="text" class="form-control" id="total" value="${wsalary.total}" readonly>
-				</div>
-			</div>
-		</c:forEach>
-	</form>
+		</div>
+	</div>
 
 </div>
 </body>

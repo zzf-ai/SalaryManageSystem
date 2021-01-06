@@ -5,7 +5,7 @@
 <!-- namespace表示命名空间 -->
 <mapper namespace="com.zzf.dao.WSalaryDao">
 	<!-- 按工号查询工资信息 -->
-	<select id="selectWSalaryByWno" parameterType="String"
+	<select id="selectWSalaryByWno" parameterType="Map"
 		resultType="WSalary">
 		select * from wsalary
 		<where>
@@ -13,9 +13,31 @@
 				and wno=#{wno}
 			</if>
 		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	<select id="selectWSalaryByWnoCounts" parameterType="String"
+		resultType="int">
+		select count(*) from wsalary
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+		</where>
+	</select>
+	<select id="selectMySalary" parameterType="String"
+		resultType="WSalary">
+		select * from wsalary
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+			and isgrant='是'
+		</where>
 	</select>
 	<!-- 按部门查询工资信息 -->
-	<select id="selectWSalaryByDept" parameterType="String"
+	<select id="selectWSalaryByDept" parameterType="Map"
 		resultType="WSalary">
 		select * from wsalary
 		<where>
@@ -23,35 +45,99 @@
 				and jdept=#{jdept}
 			</if>
 		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
 	</select>
-	<!-- 模糊查询工资信息 -->
-	<select id="selectWSalaryByWname" parameterType="String"
-		resultType="WSalary">
-		<bind name="wname" value="'%'+wname+'%'" />
-		select * from WSalary
+
+	<select id="selectWSalaryByDeptCounts" parameterType="String"
+		resultType="int">
+		select count(*) from wsalary
 		<where>
-			<if test="wname!=null and wname!=''">
-				and wname like #{wname}
+			<if test="jdept!=null and jdept!=''">
+				and jdept=#{jdept}
 			</if>
 		</where>
 	</select>
+
+	<!-- 按工资月份模糊查询工资信息 -->
+	<select id="selectWSalaryBySettleDateByPage" parameterType="Map"
+		resultType="WSalary">
+		select * from WSalary
+		<where>
+			<if test="settledate!=null and settledate!=''">
+				and settledate = #{settledate}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<select id="selectWSalaryBySettleDate" parameterType="String"
+		resultType="WSalary">
+		select * from WSalary
+		<where>
+			<if test="settledate!=null and settledate!=''">
+				and settledate = #{settledate}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectWSalaryBySettleDateCounts" parameterType="String"
+		resultType="int">
+		select count(*) from WSalary
+		<where>
+			<if test="settledate!=null and settledate!=''">
+				and settledate like #{settledate}
+			</if>
+		</where>
+	</select>
+
+	<delete id="deleteWSalaryByWnoAndDate" parameterType="WSalary">
+		delete from
+		wsalary
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+			<if test="settledate!=null and settledate!=''">
+				and settledate=#{settledate}
+			</if>
+		</where>
+	</delete>
+
 	<!-- 所有工资信息 -->
+	<select id="selectWSalaryByPage" parameterType="Map" resultType="WSalary">
+		select * from wsalary
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
 	<select id="selectWSalary" resultType="WSalary">
 		select * from wsalary
 	</select>
+
+	<select id="selectWSalaryCounts" resultType="int">
+		select count(*) from wsalary
+	</select>
+
 	<!--插入 -->
 	<insert id="insertWSalary" parameterType="WSalary">
 		insert into
-		WSalary(wno,wname,jno,jname,jdept,jsalary,jbonus,total)
-		values(#{wno},#{wname},#{jno},#{jname},#{jdept},#{jsalary},#{jbonus},#{total});
+		WSalary(wno,wname,jno,jname,jdept,jsalary,jbonus,total,settledate)
+		values(#{wno},#{wname},#{jno},#{jname},#{jdept},#{jsalary},#{jbonus},#{total},#{settledate});
 	</insert>
+
 	<!-- 删除 -->
-	<delete id="deleteWSalaryByWno" parameterType="String">
+	<delete id="deleteWSalaryByWno" parameterType="Integer">
 		delete from
-		wsalary where wno=#{wno};
+		wsalary where wsid=#{wsid};
 	</delete>
+
 	<!-- 更新 -->
-	<update id="updateWSalary" parameterType="WSalary">
+	<!--<update id="updateWSalary" parameterType="WSalary">
 		update WSalary
 		<set>
 			<if test="wno!=null and wno!=''">
@@ -80,6 +166,26 @@
 			</if>
 		</set>
 		where wsid=#{wsid};
+	</update>-->
+	<update id="updateWSalary" parameterType="Integer">
+		update WSalary
+		<set>
+			isgrant='是',
+			grantdate=CURDATE()
+		</set>
+		where wsid=#{wsid};
+	</update>
+	<update id="updateWSalaryAll">
+		update WSalary
+		<set>
+			<!--<if test="'0'==isgrant">
+				isgrant='是',
+			</if>-->
+			isgrant='是',
+			<!--模拟后一天-->
+			grantdate=date_sub(curdate(),interval -1 day)
+		</set>
+		where isgrant='否';
 	</update>
 
 	<!--清空-->

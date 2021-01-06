@@ -10,8 +10,119 @@
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
+		//使用如下方式实现弹出提示信息自动消失
+		//tip是提示信息，type:'success'是成功信息，'danger'是失败信息,'info'是普通信息,'warning'是警告信息
+		function ShowTip(tip, type) {
+			var $tip = $('#tips');
+			if ($tip.length == 0||$tip==null) {
+				// 设置样式，也可以定义在css文件中
+				$tip = $('<span id="tips" style="position:fixed;top:50px;left: 50%;z-index:9999;height: 35px;padding: 0 20px;line-height: 35px;"></span>');
+				$('body').append($tip);
+			}
+			$tip.stop(true).prop('class', 'alert alert-' + type).text(tip).css('margin-left', -$tip.outerWidth() / 2).fadeIn().delay(40000).fadeOut();//设置显示位置和显示时间和消失时间
+		}
+
+		function ShowMsg(msg) {
+			ShowTip(msg, 'info');
+		}
+
+		function ShowSuccess(msg) {
+			ShowTip(msg, 'success');
+		}
+
+		function ShowFailure(msg) {
+			ShowTip(msg, 'danger');
+		}
+
+		function ShowWarn(msg, $focus, clear) {
+			ShowTip(msg, 'warning');
+			if ($focus) {
+				$focus.focus();
+				if (clear) $focus.val('');
+			}
+			return false;
+		}
+
 		function frmSubmit() {
-			document.form1.submit();
+			var s=document.getElementsByName("id");
+			var c='';
+			for(var i=0;i<s.length;i++){
+				if(s[i].checked==true){
+					c+=s;
+				}
+			}
+			if(c.length==0){
+				alert("请选择再删除！")
+			}
+			else{
+				delubmit();
+			}
+		}
+		function delubmit() {
+			// var s=document.getElementsByName("wnoArray");
+			var checkID=[];
+			$("input[name='id']:checked").each(function(i){
+				checkID[i] = $(this).val();
+			});
+			//返回字符串，用text
+			$.ajax({
+				type:'post',
+				url:'${pageContext.request.contextPath }/wjdelete.action',
+				data:{"id":checkID},
+				traditional: true,
+				dataType:'text',
+				success:function(data){
+					console.log(data)
+					if(data=='true'){
+						/*ShowSuccess("删除成功");*/
+						window.location.reload();
+						ShowSuccess("删除成功");
+					}else {
+						window.location.reload();
+						ShowFailure("删除失败")
+					}
+				}
+			});
+		}
+
+		function changeSubmit() {
+			$("#form_data2").find('#wno2').removeAttr("disabled");
+			/*var data=JSON.stringify($("#form_data2").serialize());
+			alert(data)*/
+			$.ajax({
+				type:'post',
+				url:'${pageContext.request.contextPath }/wjupdate.action',
+				data:$("#form_data2").serialize(),
+				success:function(data){
+					console.log(data)
+					if(data=='true'){
+						window.location.reload();
+						ShowSuccess("修改成功")
+					}else {
+						window.location.reload();
+						ShowFailure("修改失败")
+					}
+				}
+			})
+		}
+
+		function addSubmit() {
+			$.ajax({
+				type:'post',
+				url:'${pageContext.request.contextPath }/insertWj.action',
+				data:$("#form_data").serialize(),
+				success:function(data){
+					console.log(data)
+					if(data=='true'){
+						//window.location.reload();
+						window.location.href='${pageContext.request.contextPath }/JobsWorkerslist.action?currentPage=${JobsWorkersList.totalPage}';
+						ShowSuccess("添加成功");
+					}else {
+						window.location.reload();
+						ShowFailure("添加失败")
+					}
+				}
+			})
 		}
 		//查找全部
 		function findAll(a) {
@@ -57,6 +168,7 @@
 						$(this).attr("selected", true);
 					}
 				});
+				modal.find('#wno2').attr("disabled","disabled")
 				modal.find('#jno2').find("option").each(function() {
 					if ($(this).text().trim() == jno) {
 						$(this).attr("selected", true);
@@ -66,16 +178,10 @@
 		});
 	</script>
 </head>
-<body id="show-refectory-html">
+<body name="body">
 <nav class="navbar navbar-default">
 	<div class="container-fluid">
 		<div class="navbar-header">
-			<%--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>--%>
 			<a class="navbar-brand" href="#">企业工资信息管理系统</a>
 		</div>
 
@@ -126,7 +232,7 @@
 							<a class="btn btn-primary" onclick="findAll(this)">全部查询</a>
 						</form>
 					</div>
-					<form action="${pageContext.request.contextPath }/wjdelete.action" method="post" id="form1" name="form1">
+					<form id="form1" name="form1">
 						<table class="table table-hover">
 							<thead>
 							<tr>
@@ -155,7 +261,7 @@
 							</tr>
 							</thead>
 							<tbody>
-							<c:forEach items="${JobsWorkersList}" var="worker">
+							<c:forEach items="${JobsWorkersList.datas}" var="worker">
 								<tr>
 									<td><input type="checkbox" name="id"
 											   value="${worker.id }"></td>
@@ -184,8 +290,92 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- 分页文字信息 -->
+	<div class="row">
+		<div class="col-md-12 text-center">
+			当前第${JobsWorkersList.currentPage}页，总共${JobsWorkersList.totalPage}页，总共${JobsWorkersList.totalCount}条记录
+		</div>
+	</div>
+	<!-- 分页条信息 -->
+	<div class="row">
+		<div class="col-md-12 text-center">
+			<nav aria-label="Page navigation">
+				<c:if test="${flag3==0}">
+					<ul class="pagination">
+						<li><a href="${pageContext.request.contextPath }/JobsWorkerslist.action?currentPage=1" >首页</a></li>
+						<c:if test="${JobsWorkersList.currentPage!=1}">
+							<li>
+								<a href="${pageContext.request.contextPath }/JobsWorkerslist.action?currentPage=${JobsWorkersList.currentPage-1}" aria-label="Previous">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+						</c:if>
+
+						<c:forEach begin="1" end="${JobsWorkersList.totalPage}" var="pageNum">
+							<li <c:if test="${pageNum==JobsWorkersList.currentPage}">class="active"</c:if> ><a href="${pageContext.request.contextPath }/JobsWorkerslist.action?currentPage=${pageNum}">${pageNum}</a></li>
+						</c:forEach>
+						<c:if test="${JobsWorkersList.currentPage!=JobsWorkersList.totalPage}">
+							<li>
+								<a href="${pageContext.request.contextPath }/JobsWorkerslist.action?currentPage=${JobsWorkersList.currentPage+1}" aria-label="Next">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</c:if>
+						<li><a href="${pageContext.request.contextPath }/JobsWorkerslist.action?currentPage=${JobsWorkersList.totalPage}">尾页</a></li>
+					</ul>
+				</c:if>
+				<c:if test="${flag3==1}">
+					<ul class="pagination">
+						<li><a href="${pageContext.request.contextPath }/JobsWorkerslistByWno.action?currentPage=1&wno=${wno}" >首页</a></li>
+						<c:if test="${JobsWorkersList.currentPage!=1}">
+							<li>
+								<a href="${pageContext.request.contextPath }/JobsWorkerslistByWno.action?currentPage=${JobsWorkersList.currentPage-1}&wno=${wno}" aria-label="Previous">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+						</c:if>
+						<c:forEach begin="1" end="${JobsWorkersList.totalPage}" var="pageNum">
+							<li <c:if test="${pageNum==JobsWorkersList.currentPage}">class="active"</c:if> ><a href="${pageContext.request.contextPath }/JobsWorkerslistByWno.action?currentPage=${pageNum}&wno=${wno}">${pageNum}</a></li>
+						</c:forEach>
+						<c:if test="${JobsWorkersList.currentPage!=JobsWorkersList.totalPage}">
+							<li>
+								<a href="${pageContext.request.contextPath }/JobsWorkerslistByWno.action?currentPage=${JobsWorkersList.currentPage+1}&wno=${wno}" aria-label="Next">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</c:if>
+						<li><a href="${pageContext.request.contextPath }/JobsWorkerslistByWno.action?currentPage=${JobsWorkersList.totalPage}&wno=${wno}">尾页</a></li>
+					</ul>
+				</c:if>
+				<c:if test="${flag3==2}">
+					<ul class="pagination">
+						<li><a href="${pageContext.request.contextPath }/JobsWorkerslistByJdept.action?currentPage=1&jdept=${jdept}" >首页</a></li>
+						<c:if test="${JobsWorkersList.currentPage!=1}">
+							<li>
+								<a href="${pageContext.request.contextPath }/JobsWorkerslistByJdept.action?currentPage=${JobsWorkersList.currentPage-1}&jdept=${jdept}" aria-label="Previous">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+						</c:if>
+						<c:forEach begin="1" end="${JobsWorkersList.totalPage}" var="pageNum">
+							<li <c:if test="${pageNum==JobsWorkersList.currentPage}">class="active"</c:if> ><a href="${pageContext.request.contextPath }/JobsWorkerslistByJdept.action?currentPage=${pageNum}">${pageNum}</a></li>
+						</c:forEach>
+						<c:if test="${JobsWorkersList.currentPage!=JobsWorkersList.totalPage}">
+							<li>
+								<a href="${pageContext.request.contextPath }/JobsWorkerslistByJdept.action?currentPage=${JobsWorkersList.currentPage+1}&jdept=${jdept}" aria-label="Next">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</c:if>
+						<li><a href="${pageContext.request.contextPath }/JobsWorkerslistByJdept.action?currentPage=${JobsWorkersList.totalPage}&jdept=${jdept}">尾页</a></li>
+					</ul>
+				</c:if>
+			</nav>
+		</div>
+	</div>
 	<!--添加业务模态框-->
-	<form method="post" action="${pageContext.request.contextPath }/insertWj.action" class="form-horizontal" role="form" id="form_data" style="margin: 20px;">
+	<form class="form-horizontal" role="form" id="form_data" style="margin: 20px;">
 		<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -229,7 +419,7 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭
 						</button>
-						<button type="submit" class="btn btn-primary">
+						<button type="submit" class="btn btn-primary" onclick="addSubmit()">
 							提交
 						</button><span id="tip"> </span>
 					</div>
@@ -239,7 +429,7 @@
 	</form>
 
 	<!--修改业务模态框-->
-	<form method="post" action="${pageContext.request.contextPath }/wjupdate.action" class="form-horizontal" role="form" id="form_data2" style="margin: 20px;">
+	<form class="form-horizontal" role="form" id="form_data2" style="margin: 20px;">
 		<div class="modal fade" id="updateUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -257,7 +447,7 @@
 								<label for="wno2" class="col-sm-3 control-label">员工</label>
 								<div class="col-sm-9">
 									<select class="form-control" name="wno" id="wno2">
-										<c:forEach items="${Workers}" var="worker">
+										<c:forEach items="${Workers2}" var="worker">
 											<option>
 													<%--<input type="hidden" name="jno" value="${job.jno}" id="jno">--%>
 													${worker.wno},${worker.wname}
@@ -307,9 +497,9 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭
 						</button>
-						<button type="submit" class="btn btn-primary">
+						<button type="submit" class="btn btn-primary" onclick="changeSubmit()">
 							提交
-						</button><span id="tip2"> </span>
+						</button><span id="tip2"></span>
 					</div>
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal -->

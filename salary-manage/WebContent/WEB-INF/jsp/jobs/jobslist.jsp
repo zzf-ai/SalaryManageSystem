@@ -22,7 +22,7 @@
 					console.log(data.toString());
 					if(data.toString()!='ok'){
 						document.getElementById("error1").style.display="none";
-						document.form_data.submit();
+						addSubmit()
 					}
 					else{
 						document.getElementById("error1").style.display="block";
@@ -44,12 +44,12 @@
 					console.log(data.toString());
 					if(data.toString()!='ok'){
 						document.getElementById("error2").style.display="none";
-						document.form_data2.submit();
+						changeSubmit()
 					}
 					else{
 						if(d==t) {
 							document.getElementById("error2").style.display = "none";
-							document.form_data2.submit();
+							changeSubmit();
 						}
 						else
 							document.getElementById("error2").style.display="block";
@@ -69,8 +69,72 @@
 				alert("请选择再删除！")
 			}
 			else{
-				document.form1.submit();
+				delubmit();
 			}
+		}
+		function delubmit() {
+			// var s=document.getElementsByName("wnoArray");
+			var checkID=[];
+			$("input[name='jnoArray']:checked").each(function(i){
+				checkID[i] = $(this).val();
+			});
+			//返回字符串，用text
+			$.ajax({
+				type:'post',
+				url:'${pageContext.request.contextPath }/jobsdelete.action',
+				data:{"jnoArray":checkID},
+				traditional: true,
+				dataType:'text',
+				success:function(data){
+					console.log(data)
+					if(data=='true'){
+						alert("删除成功")
+						window.location.reload();
+					}else {
+						alert("删除失败")
+						window.location.reload();
+					}
+				}
+			});
+		}
+
+		function changeSubmit() {
+			/*var data=JSON.stringify($("#form_data2").serialize());
+			alert(data)*/
+			$.ajax({
+				type:'post',
+				url:'${pageContext.request.contextPath }/jobsupdate.action',
+				data:$("#form_data2").serialize(),
+				success:function(data){
+					console.log(data)
+					if(data=='true'){
+						alert("修改成功")
+						window.location.reload();
+					}else {
+						alert("修改失败")
+						window.location.reload();
+					}
+				}
+			})
+		}
+
+		function addSubmit() {
+			$.ajax({
+				type:'post',
+				url:'${pageContext.request.contextPath }/jobsinsert.action',
+				data:$("#form_data").serialize(),
+				success:function(data){
+					console.log(data)
+					if(data=='true'){
+						alert("添加成功")
+						//window.location.reload();
+						window.location.href='${pageContext.request.contextPath }/jobslist.action?currentPage=${jobList.totalPage}';
+					}else {
+						alert("添加失败")
+						window.location.reload();
+					}
+				}
+			})
 		}
 		//查找全部
 		function findAll(a) {
@@ -188,7 +252,7 @@
 							<a class="btn btn-primary" onclick="findAll(this)">全部查询</a>
 						</form>
 					</div>
-					<form action="${pageContext.request.contextPath }/jobsdelete.action" method="post" id="form1" name="form1">
+					<form id="form1" name="form1">
 						<table class="table table-hover">
 							<thead>
 							<tr>
@@ -221,7 +285,7 @@
 							</tr>
 							</thead>
 							<tbody>
-							<c:forEach items="${jobList}" var="job">
+							<c:forEach items="${jobList.datas}" var="job">
 								<tr>
 									<c:if test="${USER_SESSION.authority=='公司高层'}">
 										<td><input type="checkbox" name="jnoArray" value="${job.jno }"></td>
@@ -248,6 +312,89 @@
 					</form>
 				</div>
 			</div>
+		</div>
+	</div>
+	<!-- 分页文字信息 -->
+	<div class="row">
+		<div class="col-md-12 text-center">
+			当前第${jobList.currentPage}页，总共${jobList.totalPage}页，总共${jobList.totalCount}条记录
+		</div>
+	</div>
+	<!-- 分页条信息 -->
+	<div class="row">
+		<div class="col-md-12 text-center">
+			<nav aria-label="Page navigation">
+				<c:if test="${flag2==0}">
+					<ul class="pagination">
+						<li><a href="${pageContext.request.contextPath }/jobslist.action?currentPage=1" >首页</a></li>
+						<c:if test="${jobList.currentPage!=1}">
+							<li>
+								<a href="${pageContext.request.contextPath }/jobslist.action?currentPage=${jobList.currentPage-1}" aria-label="Previous">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+						</c:if>
+
+						<c:forEach begin="1" end="${jobList.totalPage}" var="pageNum">
+							<li <c:if test="${pageNum==jobList.currentPage}">class="active"</c:if> ><a href="${pageContext.request.contextPath }/jobslist.action?currentPage=${pageNum}">${pageNum}</a></li>
+						</c:forEach>
+						<c:if test="${jobList.currentPage!=jobList.totalPage}">
+							<li>
+								<a href="${pageContext.request.contextPath }/jobslist.action?currentPage=${jobList.currentPage+1}" aria-label="Next">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</c:if>
+						<li><a href="${pageContext.request.contextPath }/jobslist.action?currentPage=${jobList.totalPage}">尾页</a></li>
+					</ul>
+				</c:if>
+				<c:if test="${flag2==1}">
+					<ul class="pagination">
+						<li><a href="${pageContext.request.contextPath }/jobslistbyname.action?currentPage=1&jname=${jname}" >首页</a></li>
+						<c:if test="${jobList.currentPage!=1}">
+							<li>
+								<a href="${pageContext.request.contextPath }/jobslistbyname.action?currentPage=${jobList.currentPage-1}&wname=${jname}" aria-label="Previous">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+						</c:if>
+						<c:forEach begin="1" end="${jobList.totalPage}" var="pageNum">
+							<li <c:if test="${pageNum==jobList.currentPage}">class="active"</c:if> ><a href="${pageContext.request.contextPath }/jobslistbyname.action?currentPage=${pageNum}&jname=${jname}">${pageNum}</a></li>
+						</c:forEach>
+						<c:if test="${jobList.currentPage!=jobList.totalPage}">
+							<li>
+								<a href="${pageContext.request.contextPath }/jobslistbyname.action?currentPage=${jobList.currentPage+1}&jname=${jname}" aria-label="Next">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</c:if>
+						<li><a href="${pageContext.request.contextPath }/jobslistbyname.action?currentPage=${jobList.totalPage}&jname=${jname}">尾页</a></li>
+					</ul>
+				</c:if>
+				<c:if test="${flag2==2}">
+					<ul class="pagination">
+						<li><a href="${pageContext.request.contextPath }/jobslistbyJdept.action?currentPage=1&jdept=${jdept}" >首页</a></li>
+						<c:if test="${jobList.currentPage!=1}">
+							<li>
+								<a href="${pageContext.request.contextPath }/jobslistbyJdept.action?currentPage=${jobList.currentPage-1}&jdept=${jdept}" aria-label="Previous">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+						</c:if>
+						<c:forEach begin="1" end="${jobList.totalPage}" var="pageNum">
+							<li <c:if test="${pageNum==jobList.currentPage}">class="active"</c:if> ><a href="${pageContext.request.contextPath }/jobslistbyJdept.action?currentPage=${pageNum}">${pageNum}</a></li>
+						</c:forEach>
+						<c:if test="${jobList.currentPage!=jobList.totalPage}">
+							<li>
+								<a href="${pageContext.request.contextPath }/jobslistbyJdept.action?currentPage=${jobList.currentPage+1}&jdept=${jdept}" aria-label="Next">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</c:if>
+						<li><a href="${pageContext.request.contextPath }/jobslistbyJdept.action?currentPage=${workerList.totalPage}&jdept=${jdept}">尾页</a></li>
+					</ul>
+				</c:if>
+			</nav>
 		</div>
 	</div>
 	<!--添加业务模态框-->

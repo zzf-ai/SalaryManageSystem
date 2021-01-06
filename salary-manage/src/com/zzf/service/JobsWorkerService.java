@@ -3,18 +3,19 @@ package com.zzf.service;
 import java.util.List;
 
 import com.zzf.po.JobsWorkers;
+import com.zzf.po.Page;
 
 public interface JobsWorkerService {
 
 	// 查询全部，员工职位模块
-	List<JobsWorkers> findJobsWithWorkers();
+	Page<JobsWorkers> findJobsWithWorkers(int currentPage);
 
 	//查询全部，工资结算模块
 	List<JobsWorkers> findJobsWithWorkers2();
 
 	// 按工号查询
-	List<JobsWorkers> findJobsWithWorkersByWno(String wno);
+	Page<JobsWorkers> findJobsWithWorkersByWno(int currentPage,String wno);
 
 	// 按部门查询
-	List<JobsWorkers> findJobsWithWorkersByJdept(String jdept);
+	Page<JobsWorkers> findJobsWithWorkersByJdept(int currentPage,String jdept);
 }

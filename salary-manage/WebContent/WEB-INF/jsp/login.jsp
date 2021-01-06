@@ -25,10 +25,16 @@
 		function check() {
 			var usercode = $("#usercode").val();
 			var password = $("#password").val();
+			var validateCode = $("#validateCode").val();
 			if (usercode == "" || password == "") {
 				$("#erro").text("账号或密码不能为空！");
 				$("#erro").show().delay(1000).hide(0);
 
+				return false;
+			}
+			if (validateCode=="") {
+				$("#erro").text("请输入验证码！");
+				$("#erro").show().delay(1000).hide(0);
 				return false;
 			}
 			return true;
@@ -37,6 +43,9 @@
 			window.location.href = "toRegister.action";
 		}
 
+		function getPic() {
+			$("#code").attr("src","${pageContext.request.contextPath }/validateCode.action?flag="+Math.random())
+		}
 
 	</script>
 </head>
@@ -66,6 +75,17 @@
 					<div style="margin-bottom: 25px" class="input-group">
 						<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
 						<input id="password" type="password" class="form-control" name="password" placeholder="password" maxlength="8">
+					</div>
+
+					<div style="margin-bottom: 25px" class="input-group">
+						<div class="row">
+							<div class="col-sm-7">
+								<input id="validateCode" type="text" class="form-control input-large" name="validateCode" value="" placeholder="验证码">
+							</div>
+							<div class="col-sm-1">
+								<img src="validateCode.action" id="code" title="看不清，点击换一张" alt="" width="100" height="32" class="center-block" style="height: 43px;cursor: pointer;" onclick="getPic()"/>
+							</div>
+						</div>
 					</div>
 
 					<%--<div class="input-group">

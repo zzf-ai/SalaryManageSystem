@@ -1,9 +1,11 @@
 package com.zzf.controller;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zzf.po.Page;
 import com.zzf.po.User;
 import com.zzf.po.Workers;
 import net.sf.json.JSONObject;
@@ -30,9 +32,17 @@ public class JobsController {
 
 	// 查询全部信息
 	@RequestMapping("/jobslist.action")
-	public String Jobslist(Model model,HttpSession session) {
-		List<Jobs> list = jobService.findAllJobs();
-		model.addAttribute("jobList", list);
+	public String Jobslist(@RequestParam(value = "currentPage",defaultValue = "1",required = false) int currentPage,Model model,HttpSession session) {
+		Page<Jobs> page = jobService.findJobsByPage(currentPage);
+		if(page.getDatas().size()==page.getPageSize()&&currentPage>page.getTotalPage()){
+			page = jobService.findJobsByPage(currentPage+1);
+		}
+
+		if(page.getDatas().size()==0&&currentPage!=1){
+			page = jobService.findJobsByPage(currentPage-1);
+		}
+		model.addAttribute("jobList", page);
+		model.addAttribute("flag2",0);
 		return "jobs/jobslist";
 	}
 
@@ -52,40 +62,59 @@ public class JobsController {
 
 	// 职位查找
 	@RequestMapping("/jobslistbyname.action")
-	public String JobslistByWname(Model model, String jname,HttpSession session) {
-		List<Jobs> list = jobService.findJobsByJname(jname.trim());
-		model.addAttribute("jobList", list);
+	public String JobslistByWname(@RequestParam(value = "currentPage",defaultValue = "1",required = false) int currentPage,Model model, String jname) {
+		Page<Jobs> page = jobService.findJobsByJname(currentPage,jname.trim());
+		if(page.getDatas().size()==page.getPageSize()&&currentPage>page.getTotalPage()){
+			page = jobService.findJobsByJname(currentPage+1,jname.trim());
+		}
+
+		if(page.getDatas().size()==0&&currentPage!=1){
+			page = jobService.findJobsByJname(currentPage-1,jname.trim());
+		}
+		model.addAttribute("jobList", page);
+		model.addAttribute("flag2",1);
 		return "jobs/jobslist";
 	}
 
 	// 按部门查找
 	@RequestMapping("/jobslistbyJdept.action")
-	public String jobslistbyJdept(Model model, String jdept, HttpSession session) {
-		List<Jobs> list = jobService.findJobsByJdept(jdept);
-		model.addAttribute("jobList", list);
+	public String jobslistbyJdept(@RequestParam(value = "currentPage",defaultValue = "1",required = false) int currentPage,Model model, String jdept) {
+		Page<Jobs> page = jobService.findJobsByJdept(currentPage,jdept.trim());
+		if(page.getDatas().size()==page.getPageSize()&&currentPage>page.getTotalPage()){
+			page = jobService.findJobsByJdept(currentPage+1,jdept.trim());
+		}
+
+		if(page.getDatas().size()==0&&currentPage!=1){
+			page = jobService.findJobsByJdept(currentPage-1,jdept.trim());
+		}
+		model.addAttribute("jobList", page);
+		model.addAttribute("flag2",2);
 		return "jobs/jobslist";
 	}
 
 
 	//添加职位
+	@ResponseBody
 	@RequestMapping(value = "/jobsinsert.action", method = RequestMethod.POST)
 	public String JobsInsert(Jobs jobs) {
 		jobService.addJobs(jobs);
-		return "redirect:jobslist.action";
+		return "true";
 	}
 
 	// 删除
+	@ResponseBody
 	@RequestMapping(value = "/jobsdelete.action", method = RequestMethod.POST)
 	public String JobsDelete(String[] jnoArray) {
 		jobService.deleteJobs(jnoArray);
-		return "redirect:jobslist.action";
+		return "true";
 	}
 
 
 	//修改职位信息
+	@ResponseBody
 	@RequestMapping(value = "/jobsupdate.action", method = RequestMethod.POST)
 	public String JobsUpdate(Jobs jobs) {
 		jobService.updateJobs(jobs);
-		return "redirect:jobslist.action";
+		return "true";
 	}
 }

@@ -22,6 +22,12 @@ public interface WJDao {
     // 删除
     void deleteWjById(Integer id);
 
+    // 全部查找
+    List<Wj> selectWJAll();
+
+    // 查找工号
+    String[] selectWnoOfWj();
+
     // 通过工号查找
     Wj selectWJByWno(String wno);
 }

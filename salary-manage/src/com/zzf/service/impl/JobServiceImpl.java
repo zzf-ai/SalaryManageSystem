@@ -1,7 +1,10 @@
 package com.zzf.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
+import com.zzf.po.Page;
+import com.zzf.po.Workers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,14 +20,76 @@ public class JobServiceImpl implements JobService {
 	@Autowired
 	private JobsDao jobsDao;
 
-	//查询全部职位信息
 	@Override
 	public List<Jobs> findAllJobs() {
-
 		return jobsDao.selectJobs();
 	}
 
+	//查询全部职位信息
+	@Override
+	public Page<Jobs> findJobsByPage(int currentPage) {
+		HashMap<String, Object> map=new HashMap<>();
+		Page<Jobs> page=new Page<>();
+
+		//封装当前页数
+		page.setCurrentPage(currentPage);
+
+		//每页显示的数据
+		int pageSize=5;
+		page.setPageSize(pageSize);
+
+		//封装总记录数
+		int totalCount=jobsDao.selectJobsCounts();
+		page.setTotalCount(totalCount);
+
+		//封装总页数
+		double t=totalCount;
+		Double num=Math.ceil(t/pageSize);//向上取整
+		page.setTotalPage(num.intValue());
+
+		//封装起始和每页显示页数
+		map.put("start",(currentPage-1)*pageSize);
+		map.put("size",page.getPageSize());
+
+		//封装每页显示的数据
+		List<Jobs> datas=jobsDao.selectJobsByPage(map);
+		page.setDatas(datas);
+		return page;
+	}
+
 	//按职位编号查询职位信息
+	@Override
+	public Page<Jobs> findJobsByJnoByPage(int currentPage,String jno) {
+		HashMap<String, Object> map=new HashMap<>();
+		Page<Jobs> page=new Page<>();
+
+		//封装当前页数
+		page.setCurrentPage(currentPage);
+
+		//每页显示的数据
+		int pageSize=5;
+		page.setPageSize(pageSize);
+
+		//封装总记录数
+		int totalCount=jobsDao.selectJobsCountsByJno(jno);
+		page.setTotalCount(totalCount);
+
+		//封装总页数
+		double t=totalCount;
+		Double num=Math.ceil(t/pageSize);//向上取整
+		page.setTotalPage(num.intValue());
+
+		map.put("jno",jno);
+		//封装起始和每页显示页数
+		map.put("start",(currentPage-1)*pageSize);
+		map.put("size",page.getPageSize());
+
+		//封装每页显示的数据
+		List<Jobs> datas=jobsDao.selectJobsByJnoByPage(map);
+		page.setDatas(datas);
+		return page;
+	}
+
 	@Override
 	public List<Jobs> findJobsByJno(String jno) {
 		return jobsDao.selectJobsByJno(jno);
@@ -32,16 +97,70 @@ public class JobServiceImpl implements JobService {
 
 	//按职位名查询职位信息
 	@Override
-	public List<Jobs> findJobsByJname(String jname) {
+	public Page<Jobs> findJobsByJname(int currentPage,String jname) {
 
-		return jobsDao.selectJobsByJname(jname);
+		HashMap<String, Object> map=new HashMap<>();
+		Page<Jobs> page=new Page<>();
+
+		//封装当前页数
+		page.setCurrentPage(currentPage);
+
+		//每页显示的数据
+		int pageSize=5;
+		page.setPageSize(pageSize);
+
+		//封装总记录数
+		int totalCount=jobsDao.selectJobsCountsByJname(jname);
+		page.setTotalCount(totalCount);
+
+		//封装总页数
+		double t=totalCount;
+		Double num=Math.ceil(t/pageSize);//向上取整
+		page.setTotalPage(num.intValue());
+
+		map.put("jname",jname);
+		//封装起始和每页显示页数
+		map.put("start",(currentPage-1)*pageSize);
+		map.put("size",page.getPageSize());
+
+		//封装每页显示的数据
+		List<Jobs> datas=jobsDao.selectJobsByJname(map);
+		page.setDatas(datas);
+		return page;
 	}
 
 	//按部门查询职位信息
 	@Override
-	public List<Jobs> findJobsByJdept(String jdept) {
+	public Page<Jobs> findJobsByJdept(int currentPage,String jdept) {
 
-		return jobsDao.selectJobsByJdept(jdept);
+		HashMap<String, Object> map=new HashMap<>();
+		Page<Jobs> page=new Page<>();
+
+		//封装当前页数
+		page.setCurrentPage(currentPage);
+
+		//每页显示的数据
+		int pageSize=5;
+		page.setPageSize(pageSize);
+
+		//封装总记录数
+		int totalCount=jobsDao.selectJobsCountsByJdept(jdept);
+		page.setTotalCount(totalCount);
+
+		//封装总页数
+		double t=totalCount;
+		Double num=Math.ceil(t/pageSize);//向上取整
+		page.setTotalPage(num.intValue());
+
+		map.put("jdept",jdept);
+		//封装起始和每页显示页数
+		map.put("start",(currentPage-1)*pageSize);
+		map.put("size",page.getPageSize());
+
+		//封装每页显示的数据
+		List<Jobs> datas=jobsDao.selectJobsByJdept(map);
+		page.setDatas(datas);
+		return page;
 	}
 
 	//添加职位信息

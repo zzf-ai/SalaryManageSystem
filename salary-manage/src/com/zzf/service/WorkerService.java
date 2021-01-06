@@ -1,7 +1,9 @@
 package com.zzf.service;
 
+import java.util.HashMap;
 import java.util.List;
 
+import com.zzf.po.Page;
 import com.zzf.po.Workers;
 
 public interface WorkerService {
@@ -9,10 +11,23 @@ public interface WorkerService {
 	// 查询全部
 	List<Workers> findAllWorkers();
 
+	//分页查询
+	Page<Workers> findWorkersByPage(int currentPage);
+
+	Page<Workers> findWorkersByWnameByPage(int currentPage,String wname);
+
+	//查询总记录
+	int findCount();
+
+	/*//模糊查询总记录
+	int findCountsByWname();*/
+
 	// 关键字查询
 	List<Workers> findWorkersByWname(String wname);
 
 	// 按工号查询
+	Page<Workers> findWorkersByWnoByPage(int currentPage,String wno);
+
 	List<Workers> findWorkersByWno(String wno);
 
 	// 添加

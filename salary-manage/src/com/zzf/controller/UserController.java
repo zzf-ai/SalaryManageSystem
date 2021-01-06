@@ -1,6 +1,7 @@
 package com.zzf.controller;
 
 
+import com.zzf.Util.ValidateCode;
 import com.zzf.po.*;
 import com.zzf.service.*;
 import net.sf.json.JSONObject;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,25 +43,50 @@ public class UserController {
 		model.addAttribute("userList", list);
 		return "users/userslist";
 	}
+	//验证码
+	@RequestMapping("/validateCode.action")
+	public void validateCode(HttpServletRequest request, HttpServletResponse response){
+		//设置类型，内容为图片
+		response.setContentType("image/jpeg");
+		//设置响应头信息，告知浏览器不要缓存
+		response.setHeader("Pragma","no-cache");
+		response.setHeader("Cache-Control","no-cache");
+		response.setDateHeader("expires",-1);
+
+		ValidateCode validateCode=new ValidateCode();
+		try{
+			//输出图片
+			validateCode.getRandomCode(request,response);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 	// 用户登录
 	@RequestMapping(value = "/login.action", method = RequestMethod.POST)
-	public String login(String usercode, String password, Model model, HttpSession session) {
+	public String login(String usercode, String password,String validateCode, Model model, HttpSession session) {
 		// 通过账号密码查询用户
 		User user = userService.findUser(usercode, password);
 		System.out.println(user);
 		if (user != null) {
-			// 将用户对象添加到Session
-			session.setAttribute("USER_SESSION", user);
-			String auth=user.getAuthority();
-			switch (auth.trim()){
-				case "财务":
-					return "customer";
-				case "系统管理员":
-					return "admin";
-				case "普通员工"	:
-					return "employee";
-				case "公司高层"	:
-					return "leader";
+			String rightCode= (String) session.getAttribute(ValidateCode.VALIDATECODE);
+			if(rightCode.equalsIgnoreCase(validateCode)){
+				// 将用户对象添加到Session
+				session.setAttribute("USER_SESSION", user);
+				String auth=user.getAuthority();
+				switch (auth.trim()){
+					case "财务":
+						return "customer";
+					case "系统管理员":
+						return "admin";
+					case "普通员工"	:
+						return "employee";
+					case "公司高层"	:
+						return "leader";
+				}
+			}
+			else{
+				model.addAttribute("msg", "验证码输入错误！");
+				return "login";
 			}
 		}
 		model.addAttribute("msg", "账号或密码错误！");

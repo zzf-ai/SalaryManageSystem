@@ -1,9 +1,11 @@
 package com.zzf.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zzf.po.Page;
 import com.zzf.po.User;
 import com.zzf.service.UserService;
 import net.sf.json.JSONObject;
@@ -14,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.zzf.po.Workers;
 import com.zzf.service.WorkerService;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -33,48 +37,73 @@ public class WorkersController {
 
 	// 全部查询
 	@RequestMapping("/workerslist.action")
-	public String Workerslist(Model model) {
-		List<Workers> list = workerService.findAllWorkers();
-		model.addAttribute("workerList", list);
+	public String Workerslist(@RequestParam(value = "currentPage",defaultValue = "1",required = false) int currentPage,Model model) {
+		//List<Workers> list = workerService.findAllWorkers();
+		Page<Workers> page = workerService.findWorkersByPage(currentPage);
+		if(page.getDatas().size()==page.getPageSize()&&currentPage>page.getTotalPage()){
+			page = workerService.findWorkersByPage(currentPage+1);
+		}
+
+		if(page.getDatas().size()==0&&currentPage!=1){
+			page = workerService.findWorkersByPage(currentPage-1);
+		}
+		model.addAttribute("flag1",0);
+		model.addAttribute("workerList", page);
 		return "workers/workerslist";
 	}
 
 	// 按姓名关键词查找
 	@RequestMapping("/workerslistbyname.action")
-	public String WorkerslistByWname(Model model, String wname) {
-		List<Workers> list = workerService.findWorkersByWname(wname.trim());
-		model.addAttribute("workerList", list);
+	public String WorkerslistByWname(@RequestParam(value = "currentPage",defaultValue = "1",required = false) int currentPage,Model model, String wname) {
+		Page<Workers> page = workerService.findWorkersByWnameByPage(currentPage,wname.trim());
+		System.out.println(page.getTotalPage());
+		/*if(page.getDatas().size()==page.getPageSize()&&currentPage!=1){
+			page = workerService.findWorkersByWnameByPage(currentPage+1,wname.trim());
+		}*/
+
+		if(page.getDatas().size()==0&&currentPage!=1){
+			page = workerService.findWorkersByWnameByPage(currentPage-1,wname.trim());
+		}
+		model.addAttribute("workerList", page);
+		model.addAttribute("flag1",1);
+		model.addAttribute("wname",wname);
 		return "workers/workerslist";
 	}
 
 	// 按工号查找
 	@RequestMapping("/workerslistbyno.action")
-	public String WorkerslistByWno(Model model, String wno) {
-		List<Workers> list = workerService.findWorkersByWno(wno.trim());
-		model.addAttribute("workerList", list);
+	public String WorkerslistByWno(@RequestParam(value = "currentPage",defaultValue = "1",required = false) int currentPage,Model model, String wno) {
+		Page<Workers> page = workerService.findWorkersByWnoByPage(currentPage,wno.trim());
+		model.addAttribute("workerList", page);
+		model.addAttribute("flag1",2);
 		return "workers/workerslist";
 	}
 
 	// 添加
+	@ResponseBody
 	@RequestMapping(value = "/workersinsert.action", method = RequestMethod.POST)
 	public String WorkersInsert(Workers workers) {
 		workerService.addWorkers(workers);
-		return "redirect:workerslist.action";
+		return "true";
 	}
 
 	// 删除
+	@ResponseBody
 	@RequestMapping(value = "/workersdelete.action", method = RequestMethod.POST)
 	public String WorkersDelete(String[] wnoArray) {
-		//System.out.println();
+		System.out.println(Arrays.toString(wnoArray));
 		workerService.deleteWorkers(wnoArray);
-		return "redirect:workerslist.action";
+		//return "redirect:workerslist.action";
+		return "true";
 	}
 
 	//更新
+	@ResponseBody
 	@RequestMapping(value = "/workersupdate.action", method = RequestMethod.POST)
 	public String WorkersUpdate(Workers workers) {
+		System.out.println(workers.toString());
 		workerService.updateWorkers(workers);
-		return "redirect:workerslist.action";
+		return "true";
 	}
 
 	//修改个人信息

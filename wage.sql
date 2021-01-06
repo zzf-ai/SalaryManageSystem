@@ -65,12 +65,15 @@ insert into wj values(3,'181549303','j3');
 create table wsalary
 (
 	wsid int primary key auto_increment, 
-	wno char(9) unique not null,
+	wno char(9) not null,
     wname varchar(30) not null,
     jno varchar(30) not null,
     jname varchar(50) not null,
     jdept varchar(50) not null,
     jsalary float not null,
     jbonus float not null,
-    total float not null
+    total float not null,
+    settledate varchar(50),
+    isgrant varchar(20) default '否',
+    grantdate date
 );

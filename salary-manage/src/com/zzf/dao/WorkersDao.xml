@@ -5,6 +5,19 @@
 <!-- namespace表示命名空间 -->
 <mapper namespace="com.zzf.dao.WorkersDao">
 	<!-- 按工号查询员工信息 -->
+	<select id="selectWorkersByWnoByPage" parameterType="Map"
+		resultType="workers">
+		select * from workers
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
 	<select id="selectWorkersByWno" parameterType="String"
 		resultType="workers">
 		select * from workers
@@ -14,6 +27,19 @@
 			</if>
 		</where>
 	</select>
+
+
+	<!-- 按工号查询员工总记录数 -->
+	<select id="selectCountsByWno" parameterType="String"
+		resultType="int">
+		select count(*) from workers
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+		</where>
+	</select>
+
 	<!-- 模糊查询员工信息 -->
 	<select id="selectWorkersByWname" parameterType="String"
 		resultType="workers">
@@ -25,10 +51,51 @@
 			</if>
 		</where>
 	</select>
+
+	<!-- 模糊查询员工总记录数 -->
+	<select id="selectCountsByWname" parameterType="String"
+		resultType="int">
+		<bind name="wname" value="'%'+wname+'%'" />
+		select count(*) from workers
+		<where>
+			<if test="wname!=null and wname!=''">
+				and wname like #{wname}
+			</if>
+		</where>
+	</select>
+
+	<!-- 模糊分页查询员工信息 -->
+	<select id="selectWorkersByWnameByPage" parameterType="Map"
+		resultType="workers">
+		<bind name="wname" value="'%'+wname+'%'" />
+		select * from workers
+		<where>
+			<if test="wname!=null and wname!=''">
+				and wname like #{wname}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
 	<!-- 所有员工信息 -->
 	<select id="selectWorkers" resultType="workers">
 		select * from workers
 	</select>
+
+	<!-- 分页查询员工信息 -->
+	<select id="selectWorkersByPage" parameterType="Map" resultType="workers">
+		select * from workers
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<!-- 查询员工信息总记录数 -->
+	<select id="selectCount" resultType="int">
+		select count(*) from workers
+	</select>
+
 	<!-- 插入 -->
 	<insert id="insertWorkers" parameterType="workers">
 		insert into

@@ -1,21 +1,27 @@
 package com.zzf.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.zzf.po.Jobs;
+import com.zzf.po.Page;
 
 public interface JobService {
 	// 查询全部职位信息
 	List<Jobs> findAllJobs();
 
+	Page<Jobs> findJobsByPage(int currentPage);
+
 	// 按职位编号查询
+	Page<Jobs> findJobsByJnoByPage(int currentPage,String jno);
+
 	List<Jobs> findJobsByJno(String jno);
 
 	// 职位名关键字查询
-	List<Jobs> findJobsByJname(String jname);
+	Page<Jobs> findJobsByJname(int currentPage,String jname);
 
 	// 按部门查询
-	List<Jobs> findJobsByJdept(String jdept);
+	Page<Jobs> findJobsByJdept(int currentPage,String jdept);
 
 	// 添加
 	void addJobs(Jobs Jobs);

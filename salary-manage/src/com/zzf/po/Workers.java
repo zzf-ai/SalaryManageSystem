@@ -57,4 +57,16 @@ public class Workers {
 	public void setWphone(String wphone) {
 		this.wphone = wphone;
 	}
+
+	@Override
+	public String toString() {
+		return "Workers{" +
+				"wid=" + wid +
+				", wno='" + wno + '\'' +
+				", wname='" + wname + '\'' +
+				", wsex='" + wsex + '\'' +
+				", wnative='" + wnative + '\'' +
+				", wphone='" + wphone + '\'' +
+				'}';
+	}
 }

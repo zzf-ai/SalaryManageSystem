@@ -5,12 +5,21 @@
 <!-- namespace表示命名空间 -->
 <mapper namespace="com.zzf.dao.JobsWorkersDao">
 
+	<select id="selectJobsWithWorkersCounts" resultType="int">
+		select
+		count(*) from workers w,jobs j,wj
+		where wj.jno=j.jno and
+		wj.wno=w.wno
+	</select>
 	<!-- 嵌套结果查询，员工职位模块 -->
-	<select id="selectJobsWithWorkers" resultMap="JobsWithWorkers">
+	<select id="selectJobsWithWorkers" parameterType="Map" resultMap="JobsWithWorkers">
 		select
 		w.*,j.*,wj.id from workers w,jobs j,wj
 		where wj.jno=j.jno and
 		wj.wno=w.wno
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
 	</select>
 	<resultMap type="JobsWorkers" id="JobsWithWorkers">
 		<id property="wno" column="wno" />
@@ -44,9 +53,20 @@
 	</resultMap>
 
 	<!-- 按工号嵌套结果查询，员工职位模块 -->
-	<select id="selectJobsWithWorkersByWno" parameterType="String"
+	<select id="selectJobsWithWorkersByWno" parameterType="Map"
 		resultMap="JobsWithWorkersByWno">
 		select w.*,j.*,wj.id from workers w,jobs j,wj
+		where
+		wj.jno=j.jno
+		and wj.wno=w.wno and w.wno=#{wno}
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<select id="selectJobsWithWorkersByWnoCounts" parameterType="String"
+		resultType="int">
+		select count(*) from workers w,jobs j,wj
 		where
 		wj.jno=j.jno
 		and wj.wno=w.wno and w.wno=#{wno}
@@ -63,9 +83,19 @@
 	</resultMap>
 
 	<!-- 按部门嵌套结果查询，员工职位模块 -->
-	<select id="selectJobsWithWorkersByJdept" parameterType="String"
+	<select id="selectJobsWithWorkersByJdept" parameterType="Map"
 		resultMap="JobsWithWorkersByJdept">
 		select w.*,j.*,wj.id from workers w,jobs j,wj
+		where
+		wj.jno=j.jno
+		and wj.wno=w.wno and j.jdept=#{jdept}
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	<select id="selectJobsWithWorkersByJdeptCounts" parameterType="String"
+		resultType="int">
+		select count(*) from workers w,jobs j,wj
 		where
 		wj.jno=j.jno
 		and wj.wno=w.wno and j.jdept=#{jdept}

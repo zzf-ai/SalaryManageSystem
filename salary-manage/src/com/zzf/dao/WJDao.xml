@@ -5,6 +5,20 @@
 <!-- namespace表示命名空间 -->
 <mapper namespace="com.zzf.dao.WJDao">
 
+	<!-- 全部查询 -->
+	<select id="selectWJAll"
+			resultType="wj">
+		select *
+		from wj
+	</select>
+
+	<!-- 查询工号 -->
+	<select id="selectWnoOfWj"
+			resultType="String">
+		select wno
+		from wj
+	</select>
+
 	<!-- 通过工号查询 -->
 	<select id="selectWJByWno" parameterType="String"
 			resultType="wj">
