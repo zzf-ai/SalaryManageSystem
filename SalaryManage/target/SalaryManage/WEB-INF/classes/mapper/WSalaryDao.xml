@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.zzf.dao.WSalaryDao">
+	<!-- 按工号查询工资信息 -->
+	<select id="selectWSalaryByWno" parameterType="Map"
+		resultType="WSalary">
+		select * from wsalary
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	<select id="selectWSalaryByWnoCounts" parameterType="String"
+		resultType="int">
+		select count(*) from wsalary
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+		</where>
+	</select>
+	<select id="selectMySalary" parameterType="String"
+		resultType="WSalary">
+		select * from wsalary
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+			and isgrant='是'
+		</where>
+	</select>
+	<!--按月份查询个人工资-->
+	<select id="selectMySalaryBySettleDatCount" parameterType="Map"
+		resultType="int">
+		select count(*) from wsalary
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+			<if test="settledate!=null and settledate!=''">
+				and settledate = #{settledate}
+			</if>
+			and isgrant='是'
+		</where>
+	</select>
+	<select id="selectMySalaryBySettleDatByPage" parameterType="Map"
+		resultType="WSalary">
+		select * from wsalary
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+			<if test="settledate!=null and settledate!=''">
+				and settledate = #{settledate}
+			</if>
+			and isgrant='是'
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	<!-- 按部门查询工资信息 -->
+	<select id="selectWSalaryByDept" parameterType="Map"
+		resultType="WSalary">
+		<bind name="jdept" value="'%'+jdept+'%'" />
+		select * from wsalary
+		<where>
+			<if test="jdept!=null and jdept!=''">
+				and jdept like #{jdept}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectWSalaryByDeptCounts" parameterType="String"
+		resultType="int">
+		<bind name="jdept" value="'%'+jdept+'%'" />
+		select count(*) from wsalary
+		<where>
+			<if test="jdept!=null and jdept!=''">
+				and jdept like #{jdept}
+			</if>
+		</where>
+	</select>
+
+	<!-- 按工资月份模糊查询工资信息 -->
+	<select id="selectWSalaryBySettleDateByPage" parameterType="Map"
+		resultType="WSalary">
+		select * from WSalary
+		<where>
+			<if test="settledate!=null and settledate!=''">
+				and settledate = #{settledate}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<select id="selectWSalaryBySettleDate" parameterType="String"
+		resultType="WSalary">
+		select * from WSalary
+		<where>
+			<if test="settledate!=null and settledate!=''">
+				and settledate = #{settledate}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectWSalaryBySettleDateCounts" parameterType="String"
+		resultType="int">
+		select count(*) from WSalary
+		<where>
+			<if test="settledate!=null and settledate!=''">
+				and settledate like #{settledate}
+			</if>
+		</where>
+	</select>
+
+	<delete id="deleteWSalaryByWnoAndDate" parameterType="WSalary">
+		delete from
+		wsalary
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+			<if test="settledate!=null and settledate!=''">
+				and settledate=#{settledate}
+			</if>
+		</where>
+	</delete>
+
+	<!-- 所有工资信息 -->
+	<select id="selectWSalaryByPage" parameterType="Map" resultType="WSalary">
+		select * from wsalary
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<select id="selectWSalary" resultType="WSalary">
+		select * from wsalary
+	</select>
+
+	<select id="selectWSalaryCounts" resultType="int">
+		select count(*) from wsalary
+	</select>
+
+	<!--插入 -->
+	<insert id="insertWSalary" parameterType="WSalary">
+		insert into
+		WSalary(wno,wname,jno,jname,jdept,jsalary,jbonus,total,settledate)
+		values(#{wno},#{wname},#{jno},#{jname},#{jdept},#{jsalary},#{jbonus},#{total},#{settledate});
+	</insert>
+
+	<!-- 删除 -->
+	<delete id="deleteWSalaryByWno" parameterType="Integer">
+		delete from
+		wsalary where wsid=#{wsid};
+	</delete>
+
+	<!-- 更新 -->
+	<update id="updateWSalary" parameterType="Integer">
+		update WSalary
+		<set>
+			isgrant='是',
+			grantdate=CURDATE()
+		</set>
+		where wsid=#{wsid};
+	</update>
+	<update id="updateWSalaryAll">
+		update WSalary
+		<set>
+			<!--<if test="'0'==isgrant">
+				isgrant='是',
+			</if>-->
+			isgrant='是',
+			grantdate=CURDATE()
+		</set>
+		where isgrant='否';
+	</update>
+
+	<!--清空-->
+	<update id="truncate">
+    	truncate table wsalary;
+	</update>
+	<!-- 批量插入数据 -->
+	<insert id="insertWSalaryBatch" parameterType="java.util.List"
+			useGeneratedKeys="true">
+		<!--<selectKey resultType="long" keyProperty="id" order="AFTER">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>-->
+		insert into WSalary
+		(wno,wname,jno,jname,jdept,jsalary,jbonus,total,settledate)
+		values
+		<foreach collection="list" item="item" index="index"
+				 separator=",">
+			(
+			#{item.wno},#{item.wname},#{item.jno},#{item.jname},#{item.jdept},#{item.jsalary},#{item.jbonus},#{item.total},#{item.settledate}
+			)
+		</foreach>
+	</insert>
+</mapper>

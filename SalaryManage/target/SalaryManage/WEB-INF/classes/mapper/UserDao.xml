@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.zzf.dao.UserDao">
+	<!-- 查询全部用户 -->
+	<select id="selectUsersCount"
+			resultType="int">
+		select count(*) from user
+	</select>
+	<select id="selectUsersByPage" parameterType="Map"
+			resultType="user">
+		select * from user
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	<!-- 通过账号密码查询用户 -->
+	<select id="findUser" parameterType="String" resultType="user">
+		select *
+		from user
+		<where>
+			<if test="usercode!=null and usercode!=''">
+				and usercode=#{usercode}
+			</if>
+			<if test="password!=null and password!=''">
+				and password=#{password}
+			</if>
+		</where>
+
+	</select>
+	<!-- 通过账号查询用户 -->
+	<select id="findUserCode" parameterType="String"
+		resultType="user">
+		select *
+		from user
+		<where>
+			<if test="usercode!=null and usercode!=''">
+				and usercode=#{usercode}
+			</if>
+		</where>
+	</select>
+	<!-- 通过账号查询用户 -->
+	<select id="findUserCodeCount" parameterType="String"
+		resultType="int">
+		select count(*)
+		from user
+		<where>
+			<if test="usercode!=null and usercode!=''">
+				and usercode=#{usercode}
+			</if>
+		</where>
+	</select>
+	<select id="findUserCodeByPage" parameterType="Map"
+		resultType="user">
+		select *
+		from user
+		<where>
+			<if test="usercode!=null and usercode!=''">
+				and usercode=#{usercode}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	<!-- 通过工号查询用户 -->
+	<select id="findUserByWno" parameterType="String"
+		resultType="user">
+		select *
+		from user
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+		</where>
+	</select>
+	<!-- 通过工号查询用户 -->
+	<select id="findUserByWnoCount" parameterType="String"
+		resultType="int">
+		select count(*)
+		from user
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+		</where>
+	</select>
+	<!-- 通过工号查询用户 -->
+	<select id="findUserByWnoByPage" parameterType="Map"
+		resultType="user">
+		select *
+		from user
+		<where>
+			<if test="wno!=null and wno!=''">
+				and wno=#{wno}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	<!-- 注册账号 -->
+	<insert id="insertUser" parameterType="user">
+		insert into
+		user(usercode,password,authority,wno) values(#{usercode},#{password},#{authority},#{wno});
+	</insert>
+
+	<!-- 删除 -->
+	<delete id="deleteUsers" parameterType="String">
+		delete from
+		user where user_id=#{user_id};
+	</delete>
+
+	<!--修改权限-->
+	<update id="grant" parameterType="String">
+		update user
+		<set>
+			<if test="authority!=null and authority!=''">
+				authority=#{authority},
+			</if>
+		</set>
+		where user_id=#{user_id};
+	</update>
+
+	<!--修改密码-->
+	<update id="changePassword" parameterType="String">
+		update user
+		<set>
+			<if test="password!=null and password!=''">
+				password=#{password},
+			</if>
+		</set>
+		where user_id=#{user_id};
+	</update>
+
+	<!--修改账号-->
+	<update id="changeUserCode" parameterType="String">
+		update user
+		<set>
+			<if test="usercode!=null and usercode!=''">
+				usercode=#{usercode},
+			</if>
+		</set>
+		where user_id=#{user_id};
+	</update>
+</mapper>

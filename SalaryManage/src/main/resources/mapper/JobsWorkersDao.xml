@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.zzf.dao.JobsWorkersDao">
+
+	<select id="selectJobsWithWorkersCounts" resultType="int">
+		select
+		count(*) from workers w,jobs j,wj
+		where wj.jno=j.jno and
+		wj.wno=w.wno
+	</select>
+	<!-- 嵌套结果查询，员工职位模块 -->
+	<select id="selectJobsWithWorkers" parameterType="Map" resultMap="JobsWithWorkers">
+		select
+		w.*,j.*,wj.id from workers w,jobs j,wj
+		where wj.jno=j.jno and
+		wj.wno=w.wno
+		order by wj.id
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+
+	</select>
+	<resultMap type="JobsWorkers" id="JobsWithWorkers">
+		<id property="wno" column="wno" />
+		<result property="wname" column="wname" />
+		<result property="id" column="id"/>
+		<collection property="jobslist" ofType="Jobs">
+			<id property="jno" column="jno" />
+			<result property="jname" column="jname" />
+			<result property="jdept" column="jdept" />
+		</collection>
+	</resultMap>
+
+	<!-- 嵌套结果查询，工资结算模块 -->
+	<select id="selectJobsWithWorkers2" resultMap="JobsWithWorkers2">
+		select
+		w.*,j.*,wj.id from workers w,jobs j,wj
+		where wj.jno=j.jno and
+		wj.wno=w.wno
+		order by wj.id
+	</select>
+	<resultMap type="JobsWorkers" id="JobsWithWorkers2">
+		<id property="wno" column="wno" />
+		<result property="wname" column="wname" />
+		<result property="id" column="id"/>
+		<collection property="jobslist" ofType="Jobs">
+			<id property="jno" column="jno" />
+			<result property="jname" column="jname" />
+			<result property="jdept" column="jdept" />
+			<result property="jsalary" column="jsalary" />
+			<result property="jbonus" column="jbonus" />
+		</collection>
+	</resultMap>
+
+	<!-- 按工号嵌套结果查询，员工职位模块 -->
+	<select id="selectJobsWithWorkersByWno" parameterType="Map"
+		resultMap="JobsWithWorkersByWno">
+		select w.*,j.*,wj.id from workers w,jobs j,wj
+		where
+		wj.jno=j.jno
+		and wj.wno=w.wno and w.wno=#{wno}
+		order by wj.id
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<select id="selectJobsWithWorkersByWnoCounts" parameterType="String"
+		resultType="int">
+		select count(*) from workers w,jobs j,wj
+		where
+		wj.jno=j.jno
+		and wj.wno=w.wno and w.wno=#{wno}
+
+	</select>
+	<resultMap type="JobsWorkers" id="JobsWithWorkersByWno">
+		<id property="wno" column="wno" />
+		<result property="wname" column="wname" />
+		<result property="id" column="id"/>
+		<collection property="jobslist" ofType="Jobs">
+			<id property="jno" column="jno" />
+			<result property="jname" column="jname" />
+			<result property="jdept" column="jdept" />
+		</collection>
+	</resultMap>
+
+	<!-- 按部门嵌套结果查询，员工职位模块 -->
+	<select id="selectJobsWithWorkersByJdept" parameterType="Map"
+		resultMap="JobsWithWorkersByJdept">
+		select w.*,j.*,wj.id from workers w,jobs j,wj
+		where
+		wj.jno=j.jno
+		and wj.wno=w.wno and j.jdept like #{jdept}
+		order by wj.id
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	<select id="selectJobsWithWorkersByJdeptCounts" parameterType="String"
+		resultType="int">
+		select count(*) from workers w,jobs j,wj
+		where
+		wj.jno=j.jno
+		and wj.wno=w.wno and j.jdept like #{jdept}
+	</select>
+	<resultMap type="JobsWorkers" id="JobsWithWorkersByJdept">
+		<id property="wno" column="wno" />
+		<result property="wname" column="wname" />
+		<result property="id" column="id"/>
+		<collection property="jobslist" ofType="Jobs">
+			<id property="jno" column="jno" />
+			<result property="jname" column="jname" />
+			<result property="jdept" column="jdept" />
+		</collection>
+	</resultMap>
+</mapper>

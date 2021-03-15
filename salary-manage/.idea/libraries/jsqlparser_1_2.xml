@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="jsqlparser-1.2">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/WebContent/WEB-INF/lib/jsqlparser-1.2.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

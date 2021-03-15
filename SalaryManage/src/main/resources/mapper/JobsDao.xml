@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.zzf.dao.JobsDao">
+	<!-- 按部门查询职位信息 -->
+	<select id="selectJobsByJdept" parameterType="Map"
+		resultType="Jobs">
+		<bind name="jdept" value="'%'+jdept+'%'" />
+		select * from jobs
+		<where>
+			<if test="jdept!=null and jdept!=''">
+				and jdept like #{jdept}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<select id="selectJobsCountsByJdept" parameterType="String"
+		resultType="int">
+		<bind name="jdept" value="'%'+jdept+'%'" />
+		select count(*) from jobs
+		<where>
+			<if test="jdept!=null and jdept!=''">
+				and jdept like #{jdept}
+			</if>
+		</where>
+	</select>
+
+	<!-- 按编号查询职位信息 -->
+	<select id="selectJobsByJno" parameterType="String"
+		resultType="Jobs">
+		select * from jobs
+		<where>
+			<if test="jno!=null and jno!=''">
+				and jno=#{jno}
+			</if>
+		</where>
+	</select>
+
+
+	<!-- 模糊查询职位信息 -->
+	<select id="selectJobsByJname" parameterType="Map"
+		resultType="Jobs">
+		<bind name="jname" value="'%'+jname+'%'" />
+		select * from jobs
+		<where>
+			<if test="jname!=null and jname!=''">
+				and jname like #{jname}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<!-- 按职位名模糊查询职位记录数 -->
+	<select id="selectJobsCountsByJname" parameterType="String"
+		resultType="int">
+		<bind name="jname" value="'%'+jname+'%'" />
+		select count(*) from jobs
+		<where>
+			<if test="jname!=null and jname!=''">
+				and jname like #{jname}
+			</if>
+		</where>
+	</select>
+	<!-- 所有职位信息 -->
+	<select id="selectJobsByPage" resultType="Jobs">
+		select * from jobs
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<!-- 所有职位信息 -->
+	<select id="selectJobs" resultType="Jobs">
+		select * from jobs
+	</select>
+
+	<!-- 所有职位记录数 -->
+	<select id="selectJobsCounts" resultType="int">
+		select count(*) from jobs
+	</select>
+	<!-- 插入 -->
+	<insert id="insertJobs" parameterType="Jobs">
+		insert into
+		jobs(jno,jname,jsalary,jbonus,jdept)
+		values(#{jno},#{jname},#{jsalary},#{jbonus},#{jdept});
+	</insert>
+	<!-- 删除 -->
+	<delete id="deleteJobsByJno" parameterType="String">
+		delete from jobs
+		where jno=#{jno};
+	</delete>
+	<!-- 更新 -->
+	<update id="updateJobs" parameterType="Jobs">
+		update jobs
+		<set>
+			<if test="jno!=null and jno!=''">
+				jno=#{jno},
+			</if>
+			<if test="jname!=null and jname!=''">
+				jname=#{jname},
+			</if>
+			<if test="jsalary!=null">
+				jsalary=#{jsalary},
+			</if>
+			<if test="jbonus!=null">
+				jbonus=#{jbonus},
+			</if>
+			<if test="jdept!=null and jdept!=''">
+				jdept=#{jdept},
+			</if>
+		</set>
+		where jid=#{jid};
+	</update>
+
+</mapper>
